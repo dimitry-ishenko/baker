@@ -5,7 +5,7 @@ SUBDIRS		:= $(shell find src -type d)
 SOURCES		:=
 INCLUDES	:= -Ilib
 LIBRARIES	:= -Llib -lcore
-DEFINES		:=
+DEFINES		:= -DASIO_STANDALONE
 OBJECTS		:=
 
 ########## OPTIONS #####################
