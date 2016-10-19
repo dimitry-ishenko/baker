@@ -7,6 +7,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "log/book.hpp"
+#include "manager.hpp"
 #include "monitor.hpp"
 #include "pgm/args.hpp"
 
@@ -42,7 +43,12 @@ try
 
     ////////////////////
     asio::io_service io;
+
     pie::monitor monitor(io);
+    pie::manager manager;
+
+    monitor.device_added().connect(std::bind(&pie::manager::add_device, &manager, std::placeholders::_1));
+    monitor.device_removed().connect(std::bind(&pie::manager::remove_device, &manager, std::placeholders::_1));
 
     io.run();
 
