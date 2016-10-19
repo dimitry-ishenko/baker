@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <poll.h>
+
 using namespace std::literals::chrono_literals;
 
 using log::level;
@@ -106,7 +108,13 @@ void monitor::enumerate()
     clog(level::debug) << "disconnecting from udev enumerate" << std::endl;
     udev_enumerate_unref(enumerate);
 
-    ////////////////////
+    schedule_poll();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void monitor::schedule_poll()
+{
+    clog(level::debug) << "scheduling poll" << std::endl;
     timer_.expires_from_now(0s);
     timer_.async_wait(std::bind(&monitor::poll, this));
 }
@@ -114,16 +122,39 @@ void monitor::enumerate()
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::poll()
 {
-    if(first_poll)
+    pollfd fds[] =
     {
-        clog(level::debug) << "polling for changes" << std::endl;
-        first_poll = false;
+        { udev_monitor_get_fd(monitor_), POLLIN, 0 },
+    };
+
+    if(::poll(fds, sizeof(fds) / sizeof(fds[0]), -1) > 0)
+    {
+        auto device = udev_monitor_receive_device(monitor_);
+        if(device)
+        {
+            std::string subsystem = udev_device_get_subsystem(device);
+            if(subsystem == "hidraw")
+            {
+                std::string path = udev_device_get_devnode(device);
+                std::string action = udev_device_get_action(device);
+
+                if(action == "add")
+                {
+                    clog(level::debug) << "adding device " << path << std::endl;
+                    device_added_(path);
+                }
+                else if(action == "remove")
+                {
+                    clog(level::debug) << "removing device " << path << std::endl;
+                    device_removed_(path);
+                }
+            }
+
+            udev_device_unref(device);
+        }
     }
 
-    // poll
-
-    timer_.expires_from_now(0s);
-    timer_.async_wait(std::bind(&monitor::poll, this));
+    schedule_poll();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

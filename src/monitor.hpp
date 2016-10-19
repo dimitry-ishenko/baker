@@ -43,8 +43,8 @@ private:
 
     void enumerate();
 
+    void schedule_poll();
     void poll();
-    bool first_poll = true;
 
     sig::signal<void(const std::string&)> device_added_;
     sig::signal<void(const std::string&)> device_removed_;
