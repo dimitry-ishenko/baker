@@ -9,6 +9,8 @@
 #ifndef PIE_MONITOR_HPP
 #define PIE_MONITOR_HPP
 
+#include "sig/signal.hpp"
+
 #include <asio.hpp>
 #include <asio/system_timer.hpp>
 #include <chrono>
@@ -29,6 +31,9 @@ public:
 
     void close() noexcept;
 
+    sig::signal_proxy<void(const std::string&)>& device_added() { return device_added_; }
+    sig::signal_proxy<void(const std::string&)>& device_removed() { return device_removed_; }
+
 private:
     ////////////////////
     asio::system_timer timer_;
@@ -40,6 +45,9 @@ private:
 
     void poll();
     bool first_poll = true;
+
+    sig::signal<void(const std::string&)> device_added_;
+    sig::signal<void(const std::string&)> device_removed_;
 };
 
 }
