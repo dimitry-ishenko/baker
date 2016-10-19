@@ -44,7 +44,7 @@ try
     ////////////////////
     asio::io_service io;
 
-    pie::monitor monitor(io);
+    pie::monitor monitor(io, clog);
     pie::manager manager;
 
     monitor.device_added().connect(std::bind(&pie::manager::add_device, &manager, std::placeholders::_1));

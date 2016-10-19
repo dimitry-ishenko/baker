@@ -6,7 +6,6 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "log/book.hpp"
 #include "monitor.hpp"
 
 #include <chrono>
@@ -16,29 +15,28 @@
 #include <poll.h>
 
 using namespace std::literals::chrono_literals;
-
 using log::level;
-extern log::book clog;
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-monitor::monitor(asio::io_service& io) try : timer_(io)
+monitor::monitor(asio::io_service& io, log::book clog) try :
+    timer_(io), clog_(std::move(clog))
 {
-    clog(level::debug) << "connecting to udev" << std::endl;
+    clog_(level::debug) << "connecting to udev" << std::endl;
     udev_ = udev_new();
     if(!udev_) throw std::runtime_error("failed to connect to udev");
 
-    clog(level::debug) << "connecting to udev monitor" << std::endl;
+    clog_(level::debug) << "connecting to udev monitor" << std::endl;
     monitor_ = udev_monitor_new_from_netlink(udev_, "udev");
     if(!monitor_) throw std::runtime_error("unable to connect to udev monitor");
 
-    clog(level::debug) << "adding monitor filter for hidraw" << std::endl;
+    clog_(level::debug) << "adding monitor filter for hidraw" << std::endl;
     udev_monitor_filter_add_match_subsystem_devtype(monitor_, "hidraw", nullptr);
 
-    clog(level::debug) << "enabling receiving" << std::endl;
+    clog_(level::debug) << "enabling receiving" << std::endl;
     udev_monitor_enable_receiving(monitor_);
 
     ////////////////////
@@ -59,13 +57,13 @@ void monitor::close() noexcept
 
     if(monitor_)
     {
-        clog(level::debug) << "disconnecting from udev monitor" << std::endl;
+        clog_(level::debug) << "disconnecting from udev monitor" << std::endl;
         udev_monitor_unref(monitor_);
         monitor_ = nullptr;
     }
     if(udev_)
     {
-        clog(level::debug) << "disconnecting from udev" << std::endl;
+        clog_(level::debug) << "disconnecting from udev" << std::endl;
         udev_unref(udev_);
         udev_ = nullptr;
     }
@@ -75,17 +73,17 @@ void monitor::close() noexcept
 void monitor::enumerate()
 {
     ////////////////////
-    clog(level::debug) << "connecting to udev enumerate" << std::endl;
+    clog_(level::debug) << "connecting to udev enumerate" << std::endl;
     auto enumerate = udev_enumerate_new(udev_);
     if(!enumerate) throw std::runtime_error("failed to connect to udev enumerate");
 
-    clog(level::debug) << "adding filter for hidraw" << std::endl;
+    clog_(level::debug) << "adding filter for hidraw" << std::endl;
     udev_enumerate_add_match_subsystem(enumerate, "hidraw");
 
-    clog(level::debug) << "scanning for devices" << std::endl;
+    clog_(level::debug) << "scanning for devices" << std::endl;
     udev_enumerate_scan_devices(enumerate);
 
-    clog(level::debug) <<  "enumerating existing devices" << std::endl;
+    clog_(level::debug) <<  "enumerating existing devices" << std::endl;
     udev_list_entry* entry;
     udev_list_entry_foreach(entry, udev_enumerate_get_list_entry(enumerate))
     {
@@ -96,7 +94,7 @@ void monitor::enumerate()
             if(subsystem == "hidraw")
             {
                 std::string path = udev_device_get_devnode(device);
-                clog(level::debug) << "adding device " << path << std::endl;
+                clog_(level::debug) << "adding device " << path << std::endl;
 
                 device_added_(path);
             }
@@ -105,7 +103,7 @@ void monitor::enumerate()
         }
     }
 
-    clog(level::debug) << "disconnecting from udev enumerate" << std::endl;
+    clog_(level::debug) << "disconnecting from udev enumerate" << std::endl;
     udev_enumerate_unref(enumerate);
 
     schedule_poll();
@@ -114,7 +112,7 @@ void monitor::enumerate()
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::schedule_poll()
 {
-    clog(level::debug) << "scheduling poll" << std::endl;
+    clog_(level::debug) << "scheduling poll" << std::endl;
     timer_.expires_from_now(0s);
     timer_.async_wait(std::bind(&monitor::poll, this));
 }
@@ -140,12 +138,12 @@ void monitor::poll()
 
                 if(action == "add")
                 {
-                    clog(level::debug) << "adding device " << path << std::endl;
+                    clog_(level::debug) << "adding device " << path << std::endl;
                     device_added_(path);
                 }
                 else if(action == "remove")
                 {
-                    clog(level::debug) << "removing device " << path << std::endl;
+                    clog_(level::debug) << "removing device " << path << std::endl;
                     device_removed_(path);
                 }
             }

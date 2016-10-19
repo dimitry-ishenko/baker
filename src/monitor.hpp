@@ -9,6 +9,7 @@
 #ifndef PIE_MONITOR_HPP
 #define PIE_MONITOR_HPP
 
+#include "log/book.hpp"
 #include "sig/signal.hpp"
 
 #include <asio.hpp>
@@ -26,7 +27,7 @@ class monitor
 {
 public:
     ////////////////////
-    explicit monitor(asio::io_service& io);
+    explicit monitor(asio::io_service& io, log::book = log::book());
     ~monitor() noexcept { close(); }
 
     void close() noexcept;
@@ -37,6 +38,7 @@ public:
 private:
     ////////////////////
     asio::system_timer timer_;
+    log::book clog_;
 
     udev* udev_ = nullptr;
     udev_monitor* monitor_ = nullptr;
