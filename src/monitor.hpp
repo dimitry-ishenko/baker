@@ -1,0 +1,48 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2016 Dimitry Ishenko
+// Distributed under the GNU GPL v2. For full terms please visit:
+// http://www.gnu.org/licenses/gpl.html
+//
+// Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
+
+////////////////////////////////////////////////////////////////////////////////
+#ifndef PIE_MONITOR_HPP
+#define PIE_MONITOR_HPP
+
+#include <asio.hpp>
+#include <asio/system_timer.hpp>
+#include <chrono>
+
+#include <libudev.h>
+
+////////////////////////////////////////////////////////////////////////////////
+namespace pie
+{
+
+////////////////////////////////////////////////////////////////////////////////
+class monitor
+{
+public:
+    ////////////////////
+    explicit monitor(asio::io_service& io);
+    ~monitor() noexcept { close(); }
+
+    void close() noexcept;
+
+private:
+    ////////////////////
+    asio::system_timer timer_;
+
+    udev* udev_ = nullptr;
+    udev_monitor* monitor_ = nullptr;
+
+    void enumerate();
+
+    void poll();
+    bool first_poll = true;
+};
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#endif // PIE_MONITOR_HPP

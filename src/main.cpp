@@ -7,6 +7,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "log/book.hpp"
+#include "monitor.hpp"
 #include "pgm/args.hpp"
 
 #include <asio.hpp>
@@ -41,6 +42,8 @@ try
 
     ////////////////////
     asio::io_service io;
+    pie::monitor monitor(io);
+
     io.run();
 
     ////////////////////
