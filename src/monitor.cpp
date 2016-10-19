@@ -11,6 +11,7 @@
 
 #include <chrono>
 #include <stdexcept>
+#include <string>
 
 using namespace std::literals::chrono_literals;
 
@@ -71,10 +72,41 @@ void monitor::close() noexcept
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::enumerate()
 {
-    clog(level::debug) << "enumerating existing devices" << std::endl;
+    ////////////////////
+    clog(level::debug) << "connecting to udev enumerate" << std::endl;
+    auto enumerate = udev_enumerate_new(udev_);
+    if(!enumerate) throw std::runtime_error("failed to connect to udev enumerate");
 
-    // enumerate
+    clog(level::debug) << "adding filter for hidraw" << std::endl;
+    udev_enumerate_add_match_subsystem(enumerate, "hidraw");
 
+    clog(level::debug) << "scanning for devices" << std::endl;
+    udev_enumerate_scan_devices(enumerate);
+
+    clog(level::debug) <<  "enumerating existing devices" << std::endl;
+    udev_list_entry* entry;
+    udev_list_entry_foreach(entry, udev_enumerate_get_list_entry(enumerate))
+    {
+        auto device = udev_device_new_from_syspath(udev_, udev_list_entry_get_name(entry));
+        if(device)
+        {
+            std::string subsystem = udev_device_get_subsystem(device);
+            if(subsystem == "hidraw")
+            {
+                std::string path = udev_device_get_devnode(device);
+                clog(level::debug) << "adding device " << path << std::endl;
+
+                device_added_(path);
+            }
+
+            udev_device_unref(device);
+        }
+    }
+
+    clog(level::debug) << "disconnecting from udev enumerate" << std::endl;
+    udev_enumerate_unref(enumerate);
+
+    ////////////////////
     timer_.expires_from_now(0s);
     timer_.async_wait(std::bind(&monitor::poll, this));
 }
