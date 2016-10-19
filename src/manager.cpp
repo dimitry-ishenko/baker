@@ -6,11 +6,9 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "log/book.hpp"
 #include "manager.hpp"
 
 using log::level;
-extern log::book clog;
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
@@ -19,13 +17,13 @@ namespace pie
 ////////////////////////////////////////////////////////////////////////////////
 void manager::add_device(const std::string& path)
 {
-    clog(level::debug) << "added device " << path << std::endl;
+    clog_(level::debug) << "added device " << path << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void manager::remove_device(const std::string& path)
 {
-    clog(level::debug) << "removed device " << path << std::endl;
+    clog_(level::debug) << "removed device " << path << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
