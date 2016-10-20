@@ -9,6 +9,7 @@
 #ifndef PIE_MONITOR_HPP
 #define PIE_MONITOR_HPP
 
+#include "info.hpp"
 #include "log/book.hpp"
 #include "sig/signal.hpp"
 
@@ -32,8 +33,8 @@ public:
 
     void close() noexcept;
 
-    sig::signal_proxy<void(const std::string&)>& device_added() { return device_added_; }
-    sig::signal_proxy<void(const std::string&)>& device_removed() { return device_removed_; }
+    sig::signal_proxy<void(const info&)>& device_added() { return device_added_; }
+    sig::signal_proxy<void(const info&)>& device_removed() { return device_removed_; }
 
 private:
     ////////////////////
@@ -48,8 +49,10 @@ private:
     void schedule_poll();
     void poll();
 
-    sig::signal<void(const std::string&)> device_added_;
-    sig::signal<void(const std::string&)> device_removed_;
+    sig::signal<void(const info&)> device_added_;
+    sig::signal<void(const info&)> device_removed_;
+
+    info from_device(udev_device**);
 };
 
 }

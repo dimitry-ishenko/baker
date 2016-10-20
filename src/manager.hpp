@@ -9,7 +9,9 @@
 #ifndef PIE_MANAGER_HPP
 #define PIE_MANAGER_HPP
 
+#include "info.hpp"
 #include "log/book.hpp"
+
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,8 +25,8 @@ public:
     ////////////////////
     explicit manager(log::book clog = log::book()) : clog_(std::move(clog)) { }
 
-    void add_device(const std::string&);
-    void remove_device(const std::string&);
+    void add_device(const info&);
+    void remove_device(const info&);
 
 private:
     ////////////////////

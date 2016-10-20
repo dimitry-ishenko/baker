@@ -15,15 +15,15 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-void manager::add_device(const std::string& path)
+void manager::add_device(const pie::info& info)
 {
-    clog_(level::debug) << "added device " << path << std::endl;
+    clog_(level::debug) << "added device " << info.path << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void manager::remove_device(const std::string& path)
+void manager::remove_device(const pie::info& info)
 {
-    clog_(level::debug) << "removed device " << path << std::endl;
+    clog_(level::debug) << "removed device " << info.path << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

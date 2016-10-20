@@ -70,41 +70,58 @@ void monitor::close() noexcept
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+info monitor::from_device(udev_device** dev)
+{
+    pie::info info;
+
+    info.path = udev_device_get_devnode(*dev);
+
+    *dev = udev_device_get_parent_with_subsystem_devtype(*dev, "usb", "usb_interface");
+
+    auto iface = udev_device_get_sysattr_value(*dev, "bInterfaceNumber");
+    info.iface = iface ? std::stoi(iface) : invalid;
+
+    *dev = udev_device_get_parent_with_subsystem_devtype(*dev, "usb", "usb_device");
+
+    auto vid = udev_device_get_sysattr_value(*dev, "idVendor");
+    info.vid = vid ? std::stoi("0x" + std::string(vid), 0, 0) : invalid;
+
+    auto pid = udev_device_get_sysattr_value(*dev, "idProduct");
+    info.pid = pid ? std::stoi("0x" + std::string(pid), 0, 0) : invalid;
+
+    return info;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void monitor::enumerate()
 {
     ////////////////////
     clog_(level::debug) << "connecting to udev enumerate" << std::endl;
-    auto enumerate = udev_enumerate_new(udev_);
-    if(!enumerate) throw std::runtime_error("failed to connect to udev enumerate");
+    auto enu = udev_enumerate_new(udev_);
+    if(!enu) throw std::runtime_error("failed to connect to udev enumerate");
 
     clog_(level::debug) << "adding filter for hidraw" << std::endl;
-    udev_enumerate_add_match_subsystem(enumerate, "hidraw");
+    udev_enumerate_add_match_subsystem(enu, "hidraw");
 
     clog_(level::debug) << "scanning for devices" << std::endl;
-    udev_enumerate_scan_devices(enumerate);
+    udev_enumerate_scan_devices(enu);
 
     clog_(level::debug) <<  "enumerating existing devices" << std::endl;
     udev_list_entry* entry;
-    udev_list_entry_foreach(entry, udev_enumerate_get_list_entry(enumerate))
+    udev_list_entry_foreach(entry, udev_enumerate_get_list_entry(enu))
     {
-        auto device = udev_device_new_from_syspath(udev_, udev_list_entry_get_name(entry));
-        if(device)
+        if(auto dev = udev_device_new_from_syspath(udev_, udev_list_entry_get_name(entry)))
         {
-            std::string subsystem = udev_device_get_subsystem(device);
-            if(subsystem == "hidraw")
-            {
-                std::string path = udev_device_get_devnode(device);
-                clog_(level::debug) << "adding device " << path << std::endl;
+            pie::info info = from_device(&dev);
+            udev_device_unref(dev);
 
-                device_added_(path);
-            }
-
-            udev_device_unref(device);
+            clog_(level::debug) << "adding device " << info.path << std::endl;
+            device_added_(info);
         }
     }
 
     clog_(level::debug) << "disconnecting from udev enumerate" << std::endl;
-    udev_enumerate_unref(enumerate);
+    udev_enumerate_unref(enu);
 
     schedule_poll();
 }
@@ -127,28 +144,22 @@ void monitor::poll()
 
     if(::poll(fds, sizeof(fds) / sizeof(fds[0]), -1) > 0)
     {
-        auto device = udev_monitor_receive_device(monitor_);
-        if(device)
+        if(auto dev = udev_monitor_receive_device(monitor_))
         {
-            std::string subsystem = udev_device_get_subsystem(device);
-            if(subsystem == "hidraw")
+            std::string act = udev_device_get_action(dev);
+            pie::info info = from_device(&dev);
+            udev_device_unref(dev);
+
+            if(act == "add")
             {
-                std::string path = udev_device_get_devnode(device);
-                std::string action = udev_device_get_action(device);
-
-                if(action == "add")
-                {
-                    clog_(level::debug) << "adding device " << path << std::endl;
-                    device_added_(path);
-                }
-                else if(action == "remove")
-                {
-                    clog_(level::debug) << "removing device " << path << std::endl;
-                    device_removed_(path);
-                }
+                clog_(level::debug) << "adding device " << info.path << std::endl;
+                device_added_(info);
             }
-
-            udev_device_unref(device);
+            else if(act == "remove")
+            {
+                clog_(level::debug) << "removing device " << info.path << std::endl;
+                device_removed_(info);
+            }
         }
     }
 
