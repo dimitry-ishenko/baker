@@ -19,10 +19,17 @@ namespace pie
 static constexpr int invalid = -1;
 
 ////////////////////////////////////////////////////////////////////////////////
+using vid = int;
+using pid = int;
+using iface = int;
+
+////////////////////////////////////////////////////////////////////////////////
 struct info
 {
     std::string path;
-    int vid, pid, iface;
+    pie::vid vid;
+    pie::pid pid;
+    pie::iface iface;
 };
 
 }
