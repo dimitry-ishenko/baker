@@ -52,6 +52,7 @@ catch(...)
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::close() noexcept
 {
+    clog_(level::debug) << "cancelling timer" << std::endl;
     asio::error_code ec;
     timer_.cancel(ec);
 
