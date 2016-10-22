@@ -7,12 +7,25 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "manager.hpp"
+#include <iomanip>
 
 using log::level;
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
 {
+
+////////////////////////////////////////////////////////////////////////////////
+bool manager::regi_class(pie::regi regi, pie::func func)
+{
+    using namespace std;
+    clog_(level::debug) << "registering class:"
+                        << " vid="   << hex << setfill('0') << setw(4) << regi.vid
+                        << " pid="   << hex << setfill('0') << setw(4) << regi.pid
+                        << " iface=" << dec                            << regi.iface
+                        << endl;
+    return regis_.emplace(std::move(regi), std::move(func)).second;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void manager::add_device(const pie::info& info)

@@ -80,15 +80,15 @@ info monitor::from_device(udev_device** dev)
     *dev = udev_device_get_parent_with_subsystem_devtype(*dev, "usb", "usb_interface");
 
     auto iface = udev_device_get_sysattr_value(*dev, "bInterfaceNumber");
-    info.iface = iface ? std::stoi(iface) : invalid;
+    info.regi.iface = iface ? std::stoi(iface) : invalid;
 
     *dev = udev_device_get_parent_with_subsystem_devtype(*dev, "usb", "usb_device");
 
     auto vid = udev_device_get_sysattr_value(*dev, "idVendor");
-    info.vid = vid ? std::stoi("0x" + std::string(vid), 0, 0) : invalid;
+    info.regi.vid = vid ? std::stoi("0x" + std::string(vid), 0, 0) : invalid;
 
     auto pid = udev_device_get_sysattr_value(*dev, "idProduct");
-    info.pid = pid ? std::stoi("0x" + std::string(pid), 0, 0) : invalid;
+    info.regi.pid = pid ? std::stoi("0x" + std::string(pid), 0, 0) : invalid;
 
     return info;
 }

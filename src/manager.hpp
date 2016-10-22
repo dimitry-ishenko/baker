@@ -12,6 +12,7 @@
 #include "info.hpp"
 #include "log/book.hpp"
 
+#include <map>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,12 +26,17 @@ public:
     ////////////////////
     explicit manager(log::book clog = log::book()) : clog_(std::move(clog)) { }
 
+    ////////////////////
+    bool regi_class(regi, func);
+
     void add_device(const info&);
     void remove_device(const info&);
 
 private:
     ////////////////////
     log::book clog_;
+
+    std::map<regi, func> regis_;
 };
 
 }

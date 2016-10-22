@@ -9,6 +9,7 @@
 #ifndef PIE_INFO_HPP
 #define PIE_INFO_HPP
 
+#include <functional>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,13 +25,29 @@ using pid = int;
 using iface = int;
 
 ////////////////////////////////////////////////////////////////////////////////
-struct info
+struct regi
 {
-    std::string path;
     pie::vid vid;
     pie::pid pid;
     pie::iface iface;
+
+    bool operator<(const regi& x) const noexcept
+    {
+        return (vid < x.vid)
+            || (vid == x.vid && (pid < x.pid
+                             || (pid == x.pid && iface < x.iface)));
+    }
 };
+
+////////////////////////////////////////////////////////////////////////////////
+struct info
+{
+    std::string path;
+    pie::regi regi;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+using func = std::function<int(const std::string&)>;
 
 }
 
