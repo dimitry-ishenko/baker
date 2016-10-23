@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
         asio::io_service io;
 
         pie::monitor monitor(io, clog);
-        pie::manager manager(clog);
+        pie::manager manager(io, clog);
 
         monitor.device_added().connect(std::bind(&pie::manager::add_device, &manager, std::placeholders::_1));
         monitor.device_removed().connect(std::bind(&pie::manager::remove_device, &manager, std::placeholders::_1));

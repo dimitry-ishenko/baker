@@ -12,6 +12,7 @@
 #include "info.hpp"
 #include "log/book.hpp"
 
+#include <asio.hpp>
 #include <map>
 #include <string>
 
@@ -24,7 +25,9 @@ class manager
 {
 public:
     ////////////////////
-    explicit manager(log::book clog = log::book()) : clog_(std::move(clog)) { }
+    explicit manager(asio::io_service& io, log::book clog = log::book()) :
+        io_(io), clog_(std::move(clog))
+    { }
 
     ////////////////////
     bool regi_class(regi, func);
@@ -34,6 +37,7 @@ public:
 
 private:
     ////////////////////
+    asio::io_service& io_;
     log::book clog_;
 
     std::map<regi, func> regis_;
