@@ -31,7 +31,7 @@ std::ostream& operator<<(std::ostream& os, const pie::regi& regi)
 ////////////////////////////////////////////////////////////////////////////////
 bool manager::regi_class(pie::regi regi, pie::func func)
 {
-    clog_(level::debug) << "registering class: " << regi << std::endl;
+    clog_(level::info) << "Registering class for: " << regi << std::endl;
     return regis_.emplace(std::move(regi), std::move(func)).second;
 }
 
@@ -48,7 +48,7 @@ void manager::add_device(const pie::info& info)
     auto ri = regis_.find(info.regi);
     if(ri != regis_.end())
     {
-        clog_(level::debug) << "found regi for: " << info.regi << std::endl;
+        clog_(level::debug) << "Found regi for: " << info.regi << std::endl;
 
         io_.notify_fork(asio::io_service::fork_prepare);
         proc::process p(func_proxy, std::ref(io_), ri->second, info.path);
@@ -57,18 +57,20 @@ void manager::add_device(const pie::info& info)
         {
             io_.notify_fork(asio::io_service::fork_parent);
 
-            clog_(level::debug) << "started new process: " << p.get_id() << std::endl;
+            clog_(level::info) << "Started new process: " << p.get_id()
+                               << " for device: " << info.path
+                               << std::endl;
             p.detach();
         }
-        else throw std::runtime_error("failed to start new process");
+        else throw std::runtime_error("Failed to start new process");
     }
-    else clog_(level::debug) << "no regi for: " << info.regi << std::endl;
+    else clog_(level::debug) << "No regi for: " << info.regi << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void manager::remove_device(const pie::info& info)
 {
-    clog_(level::debug) << "removed device " << info.path << std::endl;
+    clog_(level::debug) << "Removed device: " << info.path << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
