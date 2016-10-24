@@ -129,13 +129,13 @@ void XK_base::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_light(pie::light::color_t color, byte index, pie::light::state_t state)
+void XK_base::set_light(pie::light::color_t color, byte index, byte total, pie::light::state_t state)
 {
     clog_(level::debug) << "Sending set_light_state" << std::endl;
 
     auto store = store_for<pie::set_light_state>();
-    reinterpret_cast<pie::set_light_state*>(store.data())->color() = color;
-    reinterpret_cast<pie::set_light_state*>(store.data())->index() = index;
+    reinterpret_cast<pie::set_light_state*>(store.data())->color(total) = color;
+    reinterpret_cast<pie::set_light_state*>(store.data())->index(total) = index;
     reinterpret_cast<pie::set_light_state*>(store.data())->state = state;
 
     asio::write(stream_, asio::buffer(store));

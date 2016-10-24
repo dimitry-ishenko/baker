@@ -44,8 +44,8 @@ protected:
     ////////////////////
     asio::system_timer timer_;
 
-    int uid_ = 0;
-    std::size_t columns_ = 0, rows_ = 0;
+    int uid_;
+    std::size_t columns_, rows_, total_;
 
     bool ps_ = false;
     std::unique_ptr<byte[]> prev_;

@@ -145,19 +145,20 @@ private:
 public:
     light::state_t state;
 
-    auto color() { return _color_helper(this); }
-    auto index() { return _index_helper(this); }
+    auto color(byte total) { return _color_helper(this, total); }
+    auto index(byte total) { return _index_helper(this, total); }
 
     ////////////////////
     class _color_helper
     {
         set_light_state* p;
+        byte total;
     public:
-        constexpr _color_helper(set_light_state* p) : p(p) { }
+        constexpr _color_helper(set_light_state* p, byte total) : p(p), total(total) { }
         constexpr void operator=(light::color_t color)
         {
-            if(color == light::blue && p->_index >= 80) p->_index -= 80;
-            else if(color == light::red && p->_index < 80) p->_index += 80;
+            if(color == light::blue && p->_index >= total) p->_index -= total;
+            else if(color == light::red && p->_index < total) p->_index += total;
         }
     };
     friend class _color_helper;
@@ -166,12 +167,13 @@ public:
     class _index_helper
     {
         set_light_state* p;
+        byte total;
     public:
-        constexpr _index_helper(set_light_state* p) : p(p) { }
+        constexpr _index_helper(set_light_state* p, byte total) : p(p), total(total) { }
         void operator=(byte index)
         {
-            if(index >= 80) throw std::out_of_range("set_led_1::_index_helper");
-            p->_index = (p->_index >= 80 ? 80 : 0) + index;
+            if(index >= total) throw std::out_of_range("set_led_1::_index_helper");
+            p->_index = (p->_index >= total ? total : 0) + index;
         }
     };
     friend class _index_helper;

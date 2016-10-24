@@ -29,6 +29,8 @@ XK::XK(asio::io_service& io, const std::string& path, log::book clog) :
     uid_ = desc->uid;
     columns_ = desc->columns;
     rows_ = desc->rows;
+    total_ = columns_ * CHAR_BIT;
+
     prev_.reset(new byte[columns_]);
 
     clog_(level::debug) << "Detected device:"

@@ -45,7 +45,7 @@ protected:
 
     void toggle_lights();
     void set_rows_on(pie::light::color_t, pie::row::row_t);
-    void set_light(pie::light::color_t, byte index, pie::light::state_t);
+    void set_light(pie::light::color_t, byte index, byte total, pie::light::state_t);
 
     void set_freq(byte freq);
     void reboot();
