@@ -43,7 +43,7 @@ XK::XK(asio::io_service& io, const std::string& path, log::book clog) :
     set_level(light::blue, 128);
     set_rows_on(light::blue, row::all);
 
-    set_level(light::red, 128);
+    set_level(light::red, 255);
     set_rows_on(light::red, row::none);
 
     ////////////////////
@@ -59,8 +59,20 @@ void XK::read()
 
     auto pr = process_read(store);
 
-    for(auto index : std::get<0>(pr)) pressed_(index);
-    for(auto index : std::get<1>(pr)) released_(index);
+    for(auto index : std::get<0>(pr))
+    {
+        set_light(light::blue, index, total_, light::off);
+        set_light(light::red, index, total_, light::on);
+
+        pressed_(index);
+    }
+    for(auto index : std::get<1>(pr))
+    {
+        set_light(light::red, index, total_, light::off);
+        set_light(light::blue, index, total_, light::on);
+
+        released_(index);
+    }
 
     schedule_read();
 }
