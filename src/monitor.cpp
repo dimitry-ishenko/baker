@@ -40,6 +40,7 @@ monitor::monitor(asio::io_service& io, log::book clog) try :
     udev_monitor_enable_receiving(monitor_);
 
     ////////////////////
+    clog_(level::debug) << "Scheduling enumerate" << std::endl;
     timer_.expires_from_now(0s);
     timer_.async_wait(std::bind(&monitor::enumerate, this));
 }
@@ -52,7 +53,7 @@ catch(...)
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::close() noexcept
 {
-    clog_(level::debug) << "Cancelling timer" << std::endl;
+    clog_(level::debug) << "Cancelling poll/enumerate" << std::endl;
     asio::error_code ec;
     timer_.cancel(ec);
 
