@@ -63,30 +63,55 @@ void XK::read()
     ////////////////////
     for(auto index : std::get<0>(pr))
     {
-        if(index != pie::prog)
+        if(index == pie::prog)
         {
-            set_light(light::blue, index, total_, light::off);
-            set_light(light::red, index, total_, light::on);
+            set_led(led::red, led::on);
+            pressed_(index);
         }
-        else set_led(led::red, led::on);
+        else
+        {
+            if(pending_ != index && pending_ != none)
+            {
+                set_light(light::blue, pending_, total_, light::on);
+                set_light(light::red, pending_, total_, light::off);
+                pending_ = none;
+            }
 
-        pressed_(index);
+            if(pending_ == index || !critical_.count(index))
+            {
+                pending_ = none;
+                set_light(light::blue, index, total_, light::off);
+                set_light(light::red, index, total_, light::on);
+                pressed_(index);
+            }
+            else
+            {
+                pending_ = index;
+                set_light(light::blue, index, total_, light::off);
+                set_light(light::red, index, total_, light::flash);
+            }
+        }
     }
     for(auto index : std::get<1>(pr))
     {
-        if(index != pie::prog)
+        if(index == pie::prog)
+        {
+            set_led(led::red, led::off);
+            released_(index);
+        }
+        else if(pending_ != index)
         {
             set_light(light::red, index, total_, light::off);
             set_light(light::blue, index, total_, light::on);
+            released_(index);
         }
-        else set_led(led::red, led::off);
-
-        released_(index);
     }
 
     // toggle lock on PS release
     if(std::get<1>(pr).count(pie::prog))
     {
+        pending_ = none;
+
         lock_ = !lock_;
         set_rows_on(light::blue, lock_ ? row::none : row::all);
         set_rows_on(light::red, lock_ ? row::all : row::none);

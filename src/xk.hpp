@@ -13,6 +13,7 @@
 #include "xk_base.hpp"
 
 #include <asio/system_timer.hpp>
+#include <initializer_list>
 #include <set>
 #include <tuple>
 #include <vector>
@@ -36,6 +37,14 @@ public:
     auto columns() const noexcept { return columns_; }
     auto rows() const noexcept { return rows_; }
 
+    void set_critical(std::initializer_list<index_t> nn) { critical_.insert(std::move(nn)); }
+    void set_critical(index_t n) { critical_.insert(n); }
+
+    bool critical(index_t n) const { return critical_.count(n); }
+
+    void reset_critical(index_t n) { critical_.erase(n); }
+    void clear_critical() { critical_.clear(); }
+
     ////////////////////
     sig::signal_proxy<void(int)>& pressed() { return pressed_; }
     sig::signal_proxy<void(int)>& released() { return released_; }
@@ -54,11 +63,17 @@ protected:
 
     bool lock_ = false;
 
+    using set = std::set<index_t>;
+    using press_release = std::tuple<set, set>;
+
+    set critical_;
+
+    static constexpr index_t none = -1;
+    index_t pending_ = none;
+
     void read();
     void schedule_read();
 
-    using set = std::set<index_t>;
-    using press_release = std::tuple<set, set>;
     virtual press_release process_read(const store&);
 
     ////////////////////
