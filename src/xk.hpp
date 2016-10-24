@@ -13,9 +13,9 @@
 #include "xk_base.hpp"
 
 #include <asio/system_timer.hpp>
-#include <memory>
 #include <set>
 #include <tuple>
+#include <vector>
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
@@ -50,7 +50,7 @@ protected:
     std::size_t columns_, rows_, total_;
 
     bool ps_ = false;
-    std::unique_ptr<byte[]> prev_;
+    std::vector<byte> prev_;
 
     bool lock_ = false;
 

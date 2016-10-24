@@ -31,7 +31,7 @@ XK::XK(asio::io_service& io, const std::string& path, log::book clog) :
     rows_ = desc->rows;
     total_ = columns_ * CHAR_BIT;
 
-    prev_.reset(new byte[columns_]);
+    prev_.resize(columns_);
 
     clog_(level::debug) << "Detected device:"
                         << " uid=" << uid_ << " columns=" << columns_ << " rows=" << rows_
@@ -57,8 +57,10 @@ void XK::read()
     auto store = read_data();
     if(store.size() + 2 < columns_) throw std::invalid_argument("Input short read");
 
+    ////////////////////
     auto pr = process_read(store);
 
+    ////////////////////
     for(auto index : std::get<0>(pr))
     {
         if(index != pie::prog)
