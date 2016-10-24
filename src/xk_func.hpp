@@ -6,8 +6,8 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef PIE_XK_BASE_HPP
-#define PIE_XK_BASE_HPP
+#ifndef PIE_XK_FUNC_HPP
+#define PIE_XK_FUNC_HPP
 
 #include "log/book.hpp"
 #include "xk_data.hpp"
@@ -21,12 +21,12 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-class XK_base
+class xk_func
 {
 public:
     ////////////////////
-    XK_base(asio::io_service& io, const std::string& path, log::book = log::book());
-    virtual ~XK_base() noexcept;
+    xk_func(asio::io_service& io, const std::string& path, log::book = log::book());
+    virtual ~xk_func() noexcept;
 
     void close() noexcept;
 
@@ -62,4 +62,4 @@ protected:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif // PIE_XK_BASE_HPP
+#endif // PIE_XK_FUNC_HPP

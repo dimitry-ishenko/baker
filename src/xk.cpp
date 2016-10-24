@@ -18,7 +18,7 @@ namespace pie
 
 ////////////////////////////////////////////////////////////////////////////////
 XK::XK(asio::io_service& io, const std::string& path, log::book clog) :
-    XK_base(io, path, std::move(clog)),
+    xk_func(io, path, std::move(clog)),
     timer_(io)
 {
     clog_(level::debug) << "Initializing" << std::endl;

@@ -7,7 +7,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "errno_error.hpp"
-#include "xk_base.hpp"
+#include "xk_func.hpp"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,7 +20,7 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-XK_base::XK_base(asio::io_service& io, const std::string& path, log::book clog) :
+xk_func::xk_func(asio::io_service& io, const std::string& path, log::book clog) :
     stream_(io), clog_(std::move(clog))
 {
     clog_(level::debug) << "Opening device: " << path << std::endl;
@@ -31,10 +31,10 @@ XK_base::XK_base(asio::io_service& io, const std::string& path, log::book clog) 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-XK_base::~XK_base() noexcept { close(); }
+xk_func::~xk_func() noexcept { close(); }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK_base::close() noexcept
+void xk_func::close() noexcept
 {
     clog_(level::debug) << "Closing device" << std::endl;
     asio::error_code ec;
@@ -42,7 +42,7 @@ void XK_base::close() noexcept
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK_base::set_leds_on(pie::leds::on_t on)
+void xk_func::set_leds_on(pie::leds::on_t on)
 {
     clog_(level::debug) << "Sending set_leds_on" << std::endl;
 
@@ -52,7 +52,7 @@ void XK_base::set_leds_on(pie::leds::on_t on)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_led(pie::led::color_t color, pie::led::state_t state)
+void xk_func::set_led(pie::led::color_t color, pie::led::state_t state)
 {
     clog_(level::debug) << "Sending set_led" << std::endl;
 
@@ -63,7 +63,7 @@ void XK_base::set_led(pie::led::color_t color, pie::led::state_t state)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_uid(byte uid)
+void xk_func::set_uid(byte uid)
 {
     clog_(level::debug) << "Sending set_uid" << std::endl;
 
@@ -73,7 +73,7 @@ void XK_base::set_uid(byte uid)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::request_desc()
+void xk_func::request_desc()
 {
     clog_(level::debug) << "Sending request_desc" << std::endl;
 
@@ -81,7 +81,7 @@ void XK_base::request_desc()
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_stamp(pie::stamp::enable_t enable)
+void xk_func::set_stamp(pie::stamp::enable_t enable)
 {
     clog_(level::debug) << "Sending enable_stamp" << std::endl;
 
@@ -91,7 +91,7 @@ void XK_base::set_stamp(pie::stamp::enable_t enable)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::request_data()
+void xk_func::request_data()
 {
     clog_(level::debug) << "Sending request_data" << std::endl;
 
@@ -99,7 +99,7 @@ void XK_base::request_data()
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_level(pie::light::color_t color, byte value)
+void xk_func::set_level(pie::light::color_t color, byte value)
 {
     clog_(level::debug) << "Sending set_light_level" << std::endl;
 
@@ -110,7 +110,7 @@ void XK_base::set_level(pie::light::color_t color, byte value)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::toggle_lights()
+void xk_func::toggle_lights()
 {
     clog_(level::debug) << "Sending toggle_lights" << std::endl;
 
@@ -118,7 +118,7 @@ void XK_base::toggle_lights()
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
+void xk_func::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
 {
     clog_(level::debug) << "Sending set_rows_on" << std::endl;
 
@@ -129,7 +129,7 @@ void XK_base::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_light(pie::light::color_t color, byte index, byte total, pie::light::state_t state)
+void xk_func::set_light(pie::light::color_t color, byte index, byte total, pie::light::state_t state)
 {
     clog_(level::debug) << "Sending set_light_state" << std::endl;
 
@@ -141,7 +141,7 @@ void XK_base::set_light(pie::light::color_t color, byte index, byte total, pie::
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_freq(byte freq)
+void xk_func::set_freq(byte freq)
 {
     clog_(level::debug) << "Sending set_freq" << std::endl;
 
@@ -151,7 +151,7 @@ void XK_base::set_freq(byte freq)
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::reboot()
+void xk_func::reboot()
 {
     clog_(level::debug) << "Sending reboot" << std::endl;
 
@@ -160,7 +160,7 @@ void XK_base::reboot()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-store XK_base::read_desc()
+store xk_func::read_desc()
 {
     request_desc();
 
@@ -175,7 +175,7 @@ store XK_base::read_desc()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-store XK_base::read_data(bool request)
+store xk_func::read_data(bool request)
 {
     if(request) request_data();
 

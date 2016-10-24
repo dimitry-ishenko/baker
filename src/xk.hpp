@@ -10,7 +10,7 @@
 #define PIE_XK_HPP
 
 #include "sig/signal.hpp"
-#include "xk_base.hpp"
+#include "xk_func.hpp"
 
 #include <asio/system_timer.hpp>
 #include <initializer_list>
@@ -26,7 +26,7 @@ using index_t = int;
 static constexpr index_t prog = -1;
 
 ////////////////////////////////////////////////////////////////////////////////
-class XK : public XK_base
+class XK : public xk_func
 {
 public:
     ////////////////////
