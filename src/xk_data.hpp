@@ -172,7 +172,7 @@ public:
         constexpr _index_helper(set_light_state* p, byte total) : p(p), total(total) { }
         void operator=(byte index)
         {
-            if(index >= total) throw std::out_of_range("set_led_1::_index_helper");
+            if(index >= total) throw std::out_of_range("set_led_1::_index_helper: index out of range");
             p->_index = (p->_index >= total ? total : 0) + index;
         }
     };
