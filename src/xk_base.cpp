@@ -42,23 +42,23 @@ void XK_base::close() noexcept
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK_base::set_led_all(led_all::on_t on)
+void XK_base::set_leds_on(pie::leds::on_t on)
 {
-    clog_(level::debug) << "Sending set_led_all" << std::endl;
+    clog_(level::debug) << "Sending set_leds_on" << std::endl;
 
-    auto store = store_for<led_all>();
-    reinterpret_cast<led_all*>(store.data())->on = on;
+    auto store = store_for<pie::set_leds_on>();
+    reinterpret_cast<pie::set_leds_on*>(store.data())->on = on;
 
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_led_bank(led_bank::index_t index, led_bank::state_t state)
+void XK_base::set_led(pie::led::color_t color, pie::led::state_t state)
 {
-    clog_(level::debug) << "Sending set_led_bank" << std::endl;
+    clog_(level::debug) << "Sending set_led" << std::endl;
 
-    auto store = store_for<led_bank>();
-    reinterpret_cast<led_bank*>(store.data())->index = index;
-    reinterpret_cast<led_bank*>(store.data())->state = state;
+    auto store = store_for<pie::set_led_state>();
+    reinterpret_cast<pie::set_led_state*>(store.data())->color = color;
+    reinterpret_cast<pie::set_led_state*>(store.data())->state = state;
 
     asio::write(stream_, asio::buffer(store));
 }
@@ -67,8 +67,8 @@ void XK_base::set_uid(byte uid)
 {
     clog_(level::debug) << "Sending set_uid" << std::endl;
 
-    auto store = store_for<pie::uid>();
-    reinterpret_cast<pie::uid*>(store.data())->uid = uid;
+    auto store = store_for<pie::set_uid>();
+    reinterpret_cast<pie::set_uid*>(store.data())->uid = uid;
 
     asio::write(stream_, asio::buffer(store));
 }
@@ -81,12 +81,12 @@ void XK_base::request_desc()
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::enable_timestamp(timestamp::enable_t en)
+void XK_base::set_stamp(pie::stamp::enable_t enable)
 {
-    clog_(level::debug) << "Sending enable_timestamp" << std::endl;
+    clog_(level::debug) << "Sending enable_stamp" << std::endl;
 
-    auto store = store_for<timestamp>();
-    reinterpret_cast<timestamp*>(store.data())->enable = en;
+    auto store = store_for<pie::enable_stamp>();
+    reinterpret_cast<pie::enable_stamp*>(store.data())->enable = enable;
 
     asio::write(stream_, asio::buffer(store));
 }
@@ -99,43 +99,44 @@ void XK_base::request_data()
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_level_all(level_all::color_t color, byte value)
+void XK_base::set_level(pie::light::color_t color, byte value)
 {
-    clog_(level::debug) << "Sending set_level_all" << std::endl;
+    clog_(level::debug) << "Sending set_light_level" << std::endl;
 
-    auto store = store_for<level_all>();
-    reinterpret_cast<level_all*>(store.data())->level[color] = value;
+    level_[color] = value;
+    auto store = store_for<pie::set_light_level>();
+    std::memcpy(reinterpret_cast<pie::set_light_level*>(store.data())->level, level_, sizeof(level_));
 
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::toggle_all()
+void XK_base::toggle_lights()
 {
-    clog_(level::debug) << "Sending toggle_all" << std::endl;
+    clog_(level::debug) << "Sending toggle_lights" << std::endl;
 
-    auto store = store_for<pie::toggle_all>();
+    auto store = store_for<pie::toggle_lights>();
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_led_row(led_row::color_t color, led_row::rows_t rows)
+void XK_base::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
 {
-    clog_(level::debug) << "Sending set_led_row" << std::endl;
+    clog_(level::debug) << "Sending set_rows_on" << std::endl;
 
-    auto store = store_for<led_row>();
-    reinterpret_cast<led_row*>(store.data())->color = color;
-    reinterpret_cast<led_row*>(store.data())->rows = rows;
+    auto store = store_for<pie::set_rows_on>();
+    reinterpret_cast<pie::set_rows_on*>(store.data())->color = color;
+    reinterpret_cast<pie::set_rows_on*>(store.data())->rows = rows;
 
     asio::write(stream_, asio::buffer(store));
 }
 
-void XK_base::set_led(led::color_t color, byte index, led::state_t state)
+void XK_base::set_light(pie::light::color_t color, byte index, pie::light::state_t state)
 {
-    clog_(level::debug) << "Sending set_led" << std::endl;
+    clog_(level::debug) << "Sending set_light_state" << std::endl;
 
-    auto store = store_for<led>();
-    reinterpret_cast<led*>(store.data())->color() = color;
-    reinterpret_cast<led*>(store.data())->index() = index;
-    reinterpret_cast<led*>(store.data())->state = state;
+    auto store = store_for<pie::set_light_state>();
+    reinterpret_cast<pie::set_light_state*>(store.data())->color() = color;
+    reinterpret_cast<pie::set_light_state*>(store.data())->index() = index;
+    reinterpret_cast<pie::set_light_state*>(store.data())->state = state;
 
     asio::write(stream_, asio::buffer(store));
 }
@@ -144,8 +145,8 @@ void XK_base::set_freq(byte freq)
 {
     clog_(level::debug) << "Sending set_freq" << std::endl;
 
-    auto store = store_for<pie::freq>();
-    reinterpret_cast<pie::freq*>(store.data())->freq = freq;
+    auto store = store_for<pie::set_freq>();
+    reinterpret_cast<pie::set_freq*>(store.data())->freq = freq;
 
     asio::write(stream_, asio::buffer(store));
 }

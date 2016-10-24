@@ -32,18 +32,20 @@ public:
 
 protected:
     ////////////////////
-    void set_led_all(led_all::on_t);
-    void set_led_bank(led_bank::index_t, led_bank::state_t);
+    void set_leds_on(pie::leds::on_t);
+    void set_led(pie::led::color_t, pie::led::state_t);
 
     void set_uid(byte uid);
     void request_desc();
-    void enable_timestamp(timestamp::enable_t);
+    void set_stamp(pie::stamp::enable_t);
     void request_data();
 
-    void set_level_all(level_all::color_t, byte level);
-    void toggle_all();
-    void set_led_row(led_row::color_t, led_row::rows_t);
-    void set_led(led::color_t, byte index, led::state_t);
+    void set_level(pie::light::color_t, byte level);
+    byte level_[pie::light::color_t::end + 1] { };
+
+    void toggle_lights();
+    void set_rows_on(pie::light::color_t, pie::row::row_t);
+    void set_light(pie::light::color_t, byte index, pie::light::state_t);
 
     void set_freq(byte freq);
     void reboot();

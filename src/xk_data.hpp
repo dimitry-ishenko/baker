@@ -26,26 +26,34 @@ using word = uint16_t;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma pack(push, 1)
 
-struct led_all
+namespace leds { enum on_t : byte { none, green = 0x40, red = 0x80 }; }
+
+struct set_leds_on
 {
     const byte _ = 0;
     const byte command = 186;
 
-    enum on_t : byte { none, blue = 0x40, red = 0x80 } on;
+    leds::on_t on;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct led_bank
+namespace led
+{
+enum color_t : byte { green = 6, red = 7 };
+enum state_t : byte { off, on, flash };
+}
+
+struct set_led_state
 {
     const byte _ = 0;
     const byte command = 179;
 
-    enum index_t : byte { blue = 6, red = 7 } index;
-    enum state_t : byte { off, on, flash } state;
+    led::color_t color;
+    led::state_t state;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct uid
+struct set_uid
 {
     const byte _ = 0;
     const byte command = 189;
@@ -61,12 +69,14 @@ struct request_desc
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct timestamp
+namespace stamp { enum enable_t : byte { off, on }; }
+
+struct enable_stamp
 {
     const byte _ = 0;
     const byte command = 210;
 
-    enum enable_t : byte { off, on } enable;
+    stamp::enable_t enable;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,39 +87,55 @@ struct request_data
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct level_all
+namespace light
+{
+enum color_t : byte { blue, red, end = red };
+}
+
+struct set_light_level
 {
     const byte _ = 0;
     const byte command = 187;
 
-    enum color_t : byte { blue, red, size };
-    byte level[color_t::size];
+    byte level[light::color_t::end + 1];
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct toggle_all
+struct toggle_lights
 {
     const byte _ = 0;
     const byte command = 184;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct led_row
+namespace row
+{
+    enum row_t : byte
+    {
+        _0 = 0x01, _1 = 0x02, _2 = 0x04, _3 = 0x08,
+        _4 = 0x10, _5 = 0x20, _6 = 0x40, _7 = 0x80
+    };
+
+    static constexpr auto none = static_cast<row_t>(0x00);
+    static constexpr auto all  = static_cast<row_t>(0xff);
+}
+
+struct set_rows_on
 {
     const byte _ = 0;
     const byte command = 182;
 
-    enum color_t : byte { blue, red } color;
-    enum rows_t : byte
-    {
-        row_0 = 0x01, row_1 = 0x02, row_2 = 0x04, row_3 = 0x08,
-        row_4 = 0x10, row_5 = 0x20, row_6 = 0x40, row_7 = 0x80
-    }
-    rows;
+    light::color_t color;
+    row::row_t rows;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct led
+namespace light
+{
+    enum state_t : byte { off, on, flash };
+}
+
+struct set_light_state
 {
     const byte _ = 0;
     const byte command = 181;
@@ -117,22 +143,21 @@ struct led
 private:
     byte _index = 0;
 public:
-    enum state_t : byte { off, on, flash } state;
+    light::state_t state;
 
-    enum color_t : byte { blue, red };
     auto color() { return _color_helper(this); }
     auto index() { return _index_helper(this); }
 
     ////////////////////
     class _color_helper
     {
-        led* p;
+        set_light_state* p;
     public:
-        constexpr _color_helper(led* p) : p(p) { }
-        constexpr void operator=(color_t color)
+        constexpr _color_helper(set_light_state* p) : p(p) { }
+        constexpr void operator=(light::color_t color)
         {
-            if(color == blue && p->_index >= 80) p->_index -= 80;
-            else if(color == red && p->_index < 80) p->_index += 80;
+            if(color == light::blue && p->_index >= 80) p->_index -= 80;
+            else if(color == light::red && p->_index < 80) p->_index += 80;
         }
     };
     friend class _color_helper;
@@ -140,9 +165,9 @@ public:
     ////////////////////
     class _index_helper
     {
-        led* p;
+        set_light_state* p;
     public:
-        constexpr _index_helper(led* p) : p(p) { }
+        constexpr _index_helper(set_light_state* p) : p(p) { }
         void operator=(byte index)
         {
             if(index >= 80) throw std::out_of_range("set_led_1::_index_helper");
@@ -153,7 +178,7 @@ public:
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-struct freq
+struct set_freq
 {
     const byte _ = 0;
     const byte command = 180;
@@ -172,8 +197,6 @@ struct reboot
 ////////////////////////////////////////////////////////////////////////////////
 struct desc
 {
-    byte _;
-
     byte uid;
     byte type;
 
@@ -182,7 +205,7 @@ struct desc
     byte columns;
     byte rows;
 
-    enum on_t : byte { none, blue = 0x40, red = 0x80 } on;
+    leds::on_t on;
 };
 
 #pragma pack(pop)
@@ -204,9 +227,8 @@ store store_for()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-DECLARE_OPERATORS(pie::led_all::on_t)
-DECLARE_OPERATORS(pie::led_row::rows_t)
-DECLARE_OPERATORS(pie::desc::on_t)
+DECLARE_OPERATORS(pie::leds::on_t)
+DECLARE_OPERATORS(pie::row::row_t)
 
 ////////////////////////////////////////////////////////////////////////////////
 #endif // PIE_XK_DATA_HPP
