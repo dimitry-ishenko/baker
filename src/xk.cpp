@@ -106,10 +106,9 @@ void XK::schedule_read()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::tuple<XK::press, XK::release> XK::process_read(const store& store)
+XK::press_release XK::process_read(const store& store)
 {
-    XK::press press;
-    XK::release release;
+    set press, release;
 
     bool ps = store[1] & 0x01;
     if(ps != ps_)

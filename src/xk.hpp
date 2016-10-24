@@ -57,9 +57,9 @@ protected:
     void read();
     void schedule_read();
 
-    using press = std::set<index_t>;
-    using release = std::set<index_t>;
-    virtual std::tuple<press, release> process_read(const store&);
+    using set = std::set<index_t>;
+    using press_release = std::tuple<set, set>;
+    virtual press_release process_read(const store&);
 
     ////////////////////
     sig::signal<void(int)> pressed_;
