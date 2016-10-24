@@ -82,6 +82,16 @@ void XK::read()
         released_(index);
     }
 
+    // toggle lock on PS release
+    if(std::get<1>(pr).count(pie::prog))
+    {
+        lock_ = !lock_;
+        set_rows_on(light::blue, lock_ ? row::none : row::all);
+        set_rows_on(light::red, lock_ ? row::all : row::none);
+
+        locked_(lock_);
+    }
+
     schedule_read();
 }
 
@@ -113,9 +123,9 @@ std::tuple<XK::press, XK::release> XK::process_read(const store& store)
     auto ri = store.begin() + 2;
     for(std::size_t c = 0; c < columns_; ++c, ++ri)
     {
-        byte on  =  *ri & ~prev_[c];
-        byte off = ~*ri &  prev_[c];
-        prev_[c] =  *ri;
+        byte on  = !lock_ ? *ri & ~prev_[c] : 0;
+        byte off =         ~*ri &  prev_[c];
+        prev_[c] = !lock_ ? *ri :  prev_[c] & *ri;
 
         for(std::size_t r = 0; r < rows_; ++r)
         {

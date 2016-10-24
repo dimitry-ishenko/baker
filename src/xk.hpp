@@ -40,6 +40,8 @@ public:
     sig::signal_proxy<void(int)>& pressed() { return pressed_; }
     sig::signal_proxy<void(int)>& released() { return released_; }
 
+    sig::signal_proxy<void(bool)>& locked() { return locked_; }
+
 protected:
     ////////////////////
     asio::system_timer timer_;
@@ -49,6 +51,8 @@ protected:
 
     bool ps_ = false;
     std::unique_ptr<byte[]> prev_;
+
+    bool lock_ = false;
 
     void read();
     void schedule_read();
@@ -60,6 +64,8 @@ protected:
     ////////////////////
     sig::signal<void(int)> pressed_;
     sig::signal<void(int)> released_;
+
+    sig::signal<void(bool)> locked_;
 };
 
 }
