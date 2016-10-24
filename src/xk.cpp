@@ -61,15 +61,23 @@ void XK::read()
 
     for(auto index : std::get<0>(pr))
     {
-        set_light(light::blue, index, total_, light::off);
-        set_light(light::red, index, total_, light::on);
+        if(index != pie::prog)
+        {
+            set_light(light::blue, index, total_, light::off);
+            set_light(light::red, index, total_, light::on);
+        }
+        else set_led(led::red, led::on);
 
         pressed_(index);
     }
     for(auto index : std::get<1>(pr))
     {
-        set_light(light::red, index, total_, light::off);
-        set_light(light::blue, index, total_, light::on);
+        if(index != pie::prog)
+        {
+            set_light(light::red, index, total_, light::off);
+            set_light(light::blue, index, total_, light::on);
+        }
+        else set_led(led::red, led::off);
 
         released_(index);
     }
