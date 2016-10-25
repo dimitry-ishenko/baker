@@ -208,6 +208,9 @@ struct desc
     byte rows;
 
     leds::on_t on;
+
+    byte version;
+    word pid;
 };
 
 #pragma pack(pop)
