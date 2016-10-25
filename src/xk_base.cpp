@@ -21,8 +21,6 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
     xk_func(io, path, std::move(clog)),
     timer_(io)
 {
-    clog_(level::debug) << "Initializing" << std::endl;
-
     auto store = read_desc();
     auto desc = reinterpret_cast<pie::desc*>(store.data());
 
@@ -33,9 +31,9 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
 
     prev_.resize(columns_);
 
-    clog_(level::debug) << "Detected device:"
-                        << " uid=" << uid_ << " columns=" << columns_ << " rows=" << rows_
-                        << std::endl;
+    clog_(level::info) << "Device " << path << ':'
+                       << " uid=" << uid_ << " columns=" << columns_ << " rows=" << rows_
+                       << std::endl;
 
     ////////////////////
     set_leds_on(leds::none);
