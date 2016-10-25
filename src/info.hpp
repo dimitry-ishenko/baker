@@ -9,6 +9,8 @@
 #ifndef PIE_INFO_HPP
 #define PIE_INFO_HPP
 
+#include <iomanip>
+#include <ostream>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,13 +31,6 @@ struct regi
     pie::vid vid;
     pie::pid pid;
     pie::iface iface;
-
-    bool operator<(const regi& x) const noexcept
-    {
-        return (vid < x.vid)
-            || (vid == x.vid && (pid < x.pid
-                             || (pid == x.pid && iface < x.iface)));
-    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +40,24 @@ struct info
     pie::regi regi;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+inline bool operator<(const regi& x, const regi& y) noexcept
+{
+    return (x.vid < y.vid)
+        || (x.vid== y.vid && (x.pid < y.pid
+                          || (x.pid== y.pid && x.iface < y.iface)));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+inline std::ostream& operator<<(std::ostream& os, const pie::regi& regi)
+{
+    using namespace std;
+    return os << hex << setfill('0') << setw(4) << regi.vid << ':'
+              << hex << setfill('0') << setw(4) << regi.pid << '.'
+              << dec                            << regi.iface;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 }
 
 ////////////////////////////////////////////////////////////////////////////////

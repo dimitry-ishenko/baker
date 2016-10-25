@@ -9,8 +9,6 @@
 #include "manager.hpp"
 #include "proc/process.hpp"
 
-#include <iomanip>
-#include <ostream>
 #include <stdexcept>
 
 using log::level;
@@ -18,15 +16,6 @@ using log::level;
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
 {
-
-////////////////////////////////////////////////////////////////////////////////
-std::ostream& operator<<(std::ostream& os, const pie::regi& regi)
-{
-    using namespace std;
-    return os <<   "vid=" << hex << setfill('0') << setw(4) << regi.vid << ' '
-              <<   "pid=" << hex << setfill('0') << setw(4) << regi.pid << ' '
-              << "iface=" << dec                            << regi.iface;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename XK>
