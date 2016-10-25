@@ -26,9 +26,9 @@ class xk_func
 public:
     ////////////////////
     xk_func(asio::io_service&, const std::string& path, log::book = log::book());
-    virtual ~xk_func() noexcept;
+    virtual ~xk_func();
 
-    void close() noexcept;
+    virtual void close();
 
 protected:
     ////////////////////

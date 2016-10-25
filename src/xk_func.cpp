@@ -31,10 +31,10 @@ xk_func::xk_func(asio::io_service& io, const std::string& path, log::book clog) 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-xk_func::~xk_func() noexcept { close(); }
+xk_func::~xk_func() { close(); }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::close() noexcept
+void xk_func::close()
 {
     clog_(level::debug) << "Closing device" << std::endl;
     asio::error_code ec;
