@@ -21,9 +21,9 @@ namespace pie
 template<typename XK>
 void manager::regi_device()
 {
-    for(auto regi : XK::regis)
+    for(auto regi : traits<XK>::regis)
     {
-        clog_(level::info) << "Registering device: " << regi << std::endl;
+        clog_(level::info) << "Registering device: " << regi << ' ' << traits<XK>::name << std::endl;
         regis_.emplace(regi, [](asio::io_service& io, const std::string& path, const log::book& clog)
         {
             io.notify_fork(asio::io_service::fork_child);
