@@ -48,11 +48,18 @@ int main(int argc, char* argv[])
     try
     {
         pgm::parse(app::make_args(argc, argv), args);
+
         if(pgm::count(args, "help"))
         {
             std::cout << pgm::usage(args, argv[0], desc) << std::endl;
             return 0;
         }
+        if(pgm::count(args, "version"))
+        {
+            std::cout << "baker version " << version << std::endl;
+            return 0;
+        }
+
         if(syslog)
         {
             clog.clear();
@@ -65,12 +72,6 @@ int main(int argc, char* argv[])
             else clog.log_to(log::cerr(), level::debug);
         }
         if(quiet) clog.clear();
-
-        if(pgm::count(args, "version"))
-        {
-            std::cout << "baker version " << version << std::endl;
-            return 0;
-        }
 
         ////////////////////
         clog(level::info) << "Starting baker" << std::endl;
@@ -90,7 +91,7 @@ int main(int argc, char* argv[])
     }
     catch(std::exception& e)
     {
-        clog(level::fatal) << "Error: " << e.what() << std::endl;
+        clog(level::fatal) << "ERROR: " << e.what() << std::endl;
         return 1;
     }
 }
