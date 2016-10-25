@@ -30,7 +30,7 @@ class xk_base : public xk_func
 {
 public:
     ////////////////////
-    xk_base(asio::io_service& io, const std::string& path, log::book = log::book());
+    xk_base(asio::io_service&, const std::string& path, log::book = log::book());
 
     ////////////////////
     auto uid() const noexcept { return uid_; }
