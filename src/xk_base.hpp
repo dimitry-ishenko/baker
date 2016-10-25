@@ -15,6 +15,7 @@
 #include <asio/system_timer.hpp>
 #include <initializer_list>
 #include <set>
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -32,7 +33,11 @@ public:
     ////////////////////
     xk_base(asio::io_service&, const std::string& path, log::book = log::book());
 
+    void close() override;
+
     ////////////////////
+    auto device_id() const noexcept { return "Device " + name_; }
+
     auto uid() const noexcept { return uid_; }
     auto columns() const noexcept { return columns_; }
     auto rows() const noexcept { return rows_; }
@@ -54,6 +59,7 @@ public:
 protected:
     ////////////////////
     asio::system_timer timer_;
+    std::string name_;
 
     int uid_;
     std::size_t columns_, rows_, total_;

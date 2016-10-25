@@ -6,8 +6,11 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
+#include "proc/process.hpp"
 #include "xk_base.hpp"
+
 #include <climits> // CHAR_BIT
+#include <iomanip>
 
 using log::level;
 using namespace std::literals::chrono_literals;
@@ -19,8 +22,11 @@ namespace pie
 ////////////////////////////////////////////////////////////////////////////////
 xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) :
     xk_func(io, path, std::move(clog)),
-    timer_(io)
+    timer_(io), name_(path)
 {
+    auto p = name_.find_last_of('/');
+    if(p != std::string::npos) name_.erase(0, p + 1);
+
     auto store = read_desc();
     auto desc = reinterpret_cast<pie::desc*>(store.data());
 
@@ -31,9 +37,13 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
 
     prev_.resize(columns_);
 
-    clog_(level::info) << "Device " << path << ':'
-                       << " uid=" << uid_ << " columns=" << columns_ << " rows=" << rows_
-                       << std::endl;
+    using namespace std;
+    clog_(level::info) << device_id()
+                       << ": unit id " << uid_
+                       << ", size " << columns_ << " x " << rows_
+                       << ", version " << static_cast<int>(desc->version)
+                       << ", pid " << hex << setfill('0') << setw(4) << desc->pid
+                       << endl;
 
     ////////////////////
     set_leds_on(leds::none);
@@ -47,6 +57,22 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
     ////////////////////
     request_data();
     schedule_read();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void xk_base::close()
+{
+    clog_(level::info) << device_id() << ": closing" << std::endl;
+
+    clog_(level::debug) << "Cancelling read" << std::endl;
+    asio::error_code ec;
+    timer_.cancel(ec);
+
+    set_leds_on(leds::none);
+    set_rows_on(light::blue, row::none);
+    set_rows_on(light::red, row::none);
+
+    xk_func::close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
