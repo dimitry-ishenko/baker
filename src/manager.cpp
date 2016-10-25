@@ -53,8 +53,6 @@ void manager::add_device(const pie::info& info)
     auto ri = regis_.find(info.regi);
     if(ri != regis_.end())
     {
-        clog_(level::debug) << "Found regi for: " << info.regi << std::endl;
-
         io_.notify_fork(asio::io_service::fork_prepare);
         proc::process p(std::cref(ri->second), std::ref(io_), info.path, clog_);
 
@@ -62,12 +60,12 @@ void manager::add_device(const pie::info& info)
         {
             io_.notify_fork(asio::io_service::fork_parent);
 
-            clog_(level::info) << "Started process " << p.get_id() << " for device: " << info.path << std::endl;
+            clog_(level::info) << "Started process " << p.get_id() << " for " << info.path << std::endl;
             p.detach();
         }
         else throw std::runtime_error("Failed to start process");
     }
-    else clog_(level::debug) << "No regi for: " << info.regi << std::endl;
+    else clog_(level::info) << "Ignoring " << info.path << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
