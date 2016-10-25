@@ -85,6 +85,7 @@ void xk_base::read()
     auto pr = process_read(store);
 
     ////////////////////
+    // process presses
     for(auto index : std::get<0>(pr))
     {
         if(index == pie::prog)
@@ -94,6 +95,8 @@ void xk_base::read()
         }
         else
         {
+            // reset pending button, when a different
+            // button is pressed
             if(pending_ != index && pending_ != none)
             {
                 set_light(light::blue, pending_, total_, light::on);
@@ -101,6 +104,9 @@ void xk_base::read()
                 pending_ = none;
             }
 
+            // this is a non-critical button being pressed once
+            // or a critical button being pressed second time;
+            // send pressed event
             if(pending_ == index || !critical_.count(index))
             {
                 pending_ = none;
@@ -108,6 +114,9 @@ void xk_base::read()
                 set_light(light::red, index, total_, light::on);
                 pressed_(index);
             }
+
+            // this is a critical button being pressed once;
+            // make it flash
             else
             {
                 pending_ = index;
@@ -116,6 +125,8 @@ void xk_base::read()
             }
         }
     }
+
+    // process releases
     for(auto index : std::get<1>(pr))
     {
         if(index == pie::prog)
@@ -123,15 +134,20 @@ void xk_base::read()
             set_led(led::red, led::off);
             released_(index);
         }
-        else if(pending_ != index)
+        else if(index != pending_)
         {
-            set_light(light::red, index, total_, light::off);
-            set_light(light::blue, index, total_, light::on);
+            // when in locked mode, leave the button red
+            if(!lock_)
+            {
+                set_light(light::red, index, total_, light::off);
+                set_light(light::blue, index, total_, light::on);
+            }
             released_(index);
         }
     }
 
-    // toggle lock on PS release
+    // reset pending and toggle lock mode
+    // on PS switch release
     if(std::get<1>(pr).count(pie::prog))
     {
         pending_ = none;
@@ -173,6 +189,9 @@ xk_base::press_release xk_base::process_read(const store& store)
     auto ri = store.begin() + 2;
     for(std::size_t c = 0; c < columns_; ++c, ++ri)
     {
+        // when locked, don't allow new button presses
+        // and only let the buttons that have been
+        // pressed before the lock to be released
         byte on  = !lock_ ? *ri & ~prev_[c] : 0;
         byte off =         ~*ri &  prev_[c];
         prev_[c] = !lock_ ? *ri :  prev_[c] & *ri;
