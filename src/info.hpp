@@ -31,6 +31,8 @@ struct regi
     pie::vid vid;
     pie::pid pid;
     pie::iface iface;
+
+    bool is_valid() const noexcept { return vid != invalid && pid != invalid && iface != invalid; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +40,7 @@ struct info
 {
     std::string path;
     pie::regi regi;
+    std::string product;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,9 +55,22 @@ inline bool operator<(const regi& x, const regi& y) noexcept
 inline std::ostream& operator<<(std::ostream& os, const pie::regi& regi)
 {
     using namespace std;
-    return os << hex << setfill('0') << setw(4) << regi.vid << ':'
-              << hex << setfill('0') << setw(4) << regi.pid << '.'
-              << dec                            << regi.iface;
+    if(regi.is_valid())
+    {
+        os << hex << setfill('0') << setw(4) << regi.vid << ':'
+           << hex << setfill('0') << setw(4) << regi.pid << '.'
+           << dec                            << regi.iface;
+    }
+    return os;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+inline std::ostream& operator<<(std::ostream& os, const pie::info& info)
+{
+    if(info.regi.is_valid()) os << info.regi << ' ';
+    if(info.product.size())  os << info.product << ' ';
+                             os << "on " << info.path;
+    return os;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

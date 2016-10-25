@@ -91,6 +91,9 @@ info monitor::from_device(udev_device** dev)
     auto pid = udev_device_get_sysattr_value(*dev, "idProduct");
     info.regi.pid = pid ? std::stoi("0x" + std::string(pid), 0, 0) : invalid;
 
+    auto product = udev_device_get_sysattr_value(*dev, "product");
+    if(product) info.product = product;
+
     return info;
 }
 
@@ -117,7 +120,7 @@ void monitor::enumerate()
             pie::info info = from_device(&dev);
             udev_device_unref(dev);
 
-            clog_(level::info) << "Found device: " << info.path << std::endl;
+            clog_(level::info) << "Found device: " << info << std::endl;
             device_added_(info);
         }
     }
@@ -155,12 +158,12 @@ void monitor::poll()
 
             if(act == "add")
             {
-                clog_(level::info) << "Device connect: " << info.path << std::endl;
+                clog_(level::info) << "Device connect: " << info << std::endl;
                 device_added_(info);
             }
             else if(act == "remove")
             {
-                clog_(level::info) << "Device disconnect: " << info.path << std::endl;
+                clog_(level::info) << "Device disconnect: " << info << std::endl;
                 device_removed_(info);
             }
         }
