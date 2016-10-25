@@ -6,8 +6,8 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef PIE_XK_HPP
-#define PIE_XK_HPP
+#ifndef PIE_XK_BASE_HPP
+#define PIE_XK_BASE_HPP
 
 #include "sig/signal.hpp"
 #include "xk_func.hpp"
@@ -26,11 +26,11 @@ using index_t = int;
 static constexpr index_t prog = -1;
 
 ////////////////////////////////////////////////////////////////////////////////
-class XK : public xk_func
+class xk_base : public xk_func
 {
 public:
     ////////////////////
-    XK(asio::io_service& io, const std::string& path, log::book = log::book());
+    xk_base(asio::io_service& io, const std::string& path, log::book = log::book());
 
     ////////////////////
     auto uid() const noexcept { return uid_; }
@@ -86,4 +86,4 @@ protected:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif // XK_HPP
+#endif // PIE_XK_BASE_HPP

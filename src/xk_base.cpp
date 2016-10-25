@@ -6,7 +6,7 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "xk.hpp"
+#include "xk_base.hpp"
 #include <climits> // CHAR_BIT
 
 using log::level;
@@ -17,7 +17,7 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-XK::XK(asio::io_service& io, const std::string& path, log::book clog) :
+xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) :
     xk_func(io, path, std::move(clog)),
     timer_(io)
 {
@@ -52,7 +52,7 @@ XK::XK(asio::io_service& io, const std::string& path, log::book clog) :
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK::read()
+void xk_base::read()
 {
     auto store = read_data();
     if(store.size() + 2 < columns_) throw std::invalid_argument("Input short read");
@@ -123,15 +123,15 @@ void XK::read()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK::schedule_read()
+void xk_base::schedule_read()
 {
     clog_(level::debug) << "Scheduling read" << std::endl;
     timer_.expires_from_now(0s);
-    timer_.async_wait(std::bind(&XK::read, this));
+    timer_.async_wait(std::bind(&xk_base::read, this));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-XK::press_release XK::process_read(const store& store)
+xk_base::press_release xk_base::process_read(const store& store)
 {
     set press, release;
 
