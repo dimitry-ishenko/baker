@@ -9,7 +9,6 @@
 #ifndef PIE_INFO_HPP
 #define PIE_INFO_HPP
 
-#include <functional>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,9 +44,6 @@ struct info
     std::string path;
     pie::regi regi;
 };
-
-////////////////////////////////////////////////////////////////////////////////
-using func = std::function<int(const std::string&)>;
 
 }
 
