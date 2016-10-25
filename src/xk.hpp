@@ -11,10 +11,41 @@
 
 #include "info.hpp"
 #include "xk_base.hpp"
+#include "xk16_base.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
 {
+
+////////////////////////////////////////////////////////////////////////////////
+class xk4 : public xk16_base
+{
+public:
+    xk4(asio::io_service& io, const std::string& path, log::book clog = log::book()) :
+        xk16_base(1, io, path, std::move(clog))
+    { }
+    static constexpr pie::regi regis[] = { { 0x05f3, 0x0467, 0 }, { 0x05f3, 0x0469, 0 } };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class xk8 : public xk16_base
+{
+public:
+    xk8(asio::io_service& io, const std::string& path, log::book clog = log::book()) :
+        xk16_base(2, io, path, std::move(clog))
+    { }
+    static constexpr pie::regi regis[] = { { 0x05f3, 0x046a, 0 }, { 0x05f3, 0x046c, 0 } };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+class xk16 : public xk16_base
+{
+public:
+    xk16(asio::io_service& io, const std::string& path, log::book clog = log::book()) :
+        xk16_base(4, io, path, std::move(clog))
+    { }
+    static constexpr pie::regi regis[] = { { 0x05f3, 0x0419, 0 }, { 0x05f3, 0x041b, 0 } };
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 class xk24 : public xk_base

@@ -13,6 +13,9 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
+constexpr pie::regi xk4   ::regis[];
+constexpr pie::regi xk8   ::regis[];
+constexpr pie::regi xk16  ::regis[];
 constexpr pie::regi xk24  ::regis[];
 constexpr pie::regi xkr32 ::regis[];
 constexpr pie::regi xk60  ::regis[];
