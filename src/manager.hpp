@@ -41,9 +41,7 @@ private:
     using create = std::function<int(asio::io_service&, const std::string& path, const log::book&)>;
     std::map<regi, create> regis_;
 
-    template<typename> void regi_class();
-
-    static int proxy(const create&, asio::io_service&, const std::string& path, const log::book&);
+    template<typename> void regi_device();
 };
 
 }
