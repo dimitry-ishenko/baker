@@ -34,10 +34,10 @@ int main(int argc, char* argv[])
 
     pgm::arg args[] =
     {
-        { 'V', "version"         , "Show version and exit"           },
+        { 'v', "version"         , "Show version and exit"           },
 
         { 'q', "quiet"  , quiet  , "Quiet mode (show no messages)"   },
-        { 'v', "verbose", verbose, "Show verbose messages"           },
+        { 'o', "verbose", verbose, "Show verbose messages"           },
         { 's', "syslog" , syslog , "Log messages to syslog"          },
 
         { 'h', "help"            , "Show this screen and exit"       },
