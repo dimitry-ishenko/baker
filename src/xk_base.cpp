@@ -43,7 +43,7 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
                        << ", size " << columns_ << " x " << rows_
                        << ", version " << static_cast<int>(desc->version)
                        << ", pid " << hex << setfill('0') << setw(4) << desc->pid
-                       << endl;
+                       << dec << endl;
 
     ////////////////////
     set_leds_on(leds::none);
@@ -92,6 +92,7 @@ void xk_base::read()
         {
             set_led(led::red, led::on);
             pressed_(index);
+            clog_(level::debug) << "Pressed PS" << std::endl;
         }
         else
         {
@@ -113,6 +114,7 @@ void xk_base::read()
                 set_light(light::blue, index, total_, light::off);
                 set_light(light::red, index, total_, light::on);
                 pressed_(index);
+                clog_(level::debug) << "Pressed " << index << std::endl;
             }
 
             // this is a critical button being pressed once;
@@ -133,6 +135,7 @@ void xk_base::read()
         {
             set_led(led::red, led::off);
             released_(index);
+            clog_(level::debug) << "Released PS" << std::endl;
         }
         else if(index != pending_)
         {
@@ -143,6 +146,7 @@ void xk_base::read()
                 set_light(light::blue, index, total_, light::on);
             }
             released_(index);
+            clog_(level::debug) << "Released " << index << std::endl;
         }
     }
 
@@ -157,6 +161,7 @@ void xk_base::read()
         set_rows_on(light::red, lock_ ? row::all : row::none);
 
         locked_(lock_);
+        clog_(level::debug) << (lock_ ? "Locked " : "Unlocked") << std::endl;
     }
 
     schedule_read();
