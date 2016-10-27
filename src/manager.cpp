@@ -6,6 +6,7 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
+#include "actions.hpp"
 #include "manager.hpp"
 #include "proc/process.hpp"
 
@@ -24,10 +25,13 @@ void manager::regi_device()
     for(auto regi : traits<XK>::regis)
     {
         clog_(level::info) << "Registering device: " << regi << ' ' << traits<XK>::name << std::endl;
-        regis_.emplace(regi, [](asio::io_service& io, const std::string& path, const log::book& clog)
+        regis_.emplace(regi, [conf = conf_](asio::io_service& io, const std::string& path, const log::book& clog)
         {
             io.notify_fork(asio::io_service::fork_child);
+
             XK device(io, path, clog);
+            pie::actions actions(conf, device, clog);
+
             io.run(); return 0;
         });
     }
