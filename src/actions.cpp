@@ -29,24 +29,35 @@ actions::actions(const std::string& conf, xk_base& device, log::book clog) :
     std::fstream fs(conf, std::ios_base::in);
     if(!fs.is_open()) throw std::runtime_error("Failed to open file");
 
-    auto count = device.columns() * device.rows();
-
-    std::vector<std::string> actions(count * 2);
+    std::vector<std::string> actions(device.total() * 2);
     std::vector<pgm::arg> args;
 
     // create args in the form <uid>-<index>{*}
-    auto prefix = std::to_string(device.uid()) + '-';
-    for(std::size_t n = 0; n < count; ++n)
+    for(std::size_t n = 0; n < actions.size(); ++n)
     {
-        args.emplace_back(prefix + std::to_string(n), actions[n], "");
-        args.emplace_back(prefix + std::to_string(n) + '*', actions[n], "");
+        auto index = n / 2;
+        bool critical = n & 1;
+
+        auto name = std::to_string(device.uid()) + '-' + std::to_string(index);
+        if(critical) name += '*';
+
+        args.emplace_back(name, actions[n], "");
     }
 
     pgm::parse(fs, args, pgm::policy::duplicate::accept, pgm::policy::extra::ignore);
 
     for(std::size_t n = 0; n < actions.size(); ++n)
         if(actions[n].size())
-            map_.emplace(n, std::make_tuple(n & 1, std::move(actions[n])));
+        {
+            auto index = n / 2;
+            bool critical = n & 1;
+
+            auto name = std::to_string(device.uid()) + ':' + std::to_string(index);
+            if(critical) name += '*';
+            clog_(level::debug) << "Found action: " << name << "\t= " << actions[n] << std::endl;
+
+            map_.emplace(index, std::make_tuple(critical, std::move(actions[n])));
+        }
     clog_(level::info) << "Found " << map_.size() << " actions for unit id " << device.uid() << std::endl;
 
     ////////////////////

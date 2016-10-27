@@ -39,8 +39,7 @@ public:
     auto device_id() const noexcept { return "Device " + name_; }
 
     auto uid() const noexcept { return uid_; }
-    auto columns() const noexcept { return columns_; }
-    auto rows() const noexcept { return rows_; }
+    auto total() const noexcept { return total_; }
 
     void set_critical(std::initializer_list<index_t> nn) { critical_.insert(std::move(nn)); }
     void set_critical(index_t n) { critical_.insert(n); }
