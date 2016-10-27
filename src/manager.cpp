@@ -34,8 +34,8 @@ void manager::regi_device()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-manager::manager(asio::io_service& io, log::book clog) :
-    io_(io), clog_(std::move(clog))
+manager::manager(asio::io_service& io, std::string conf, log::book clog) :
+    io_(io), conf_(std::move(conf)), clog_(std::move(clog))
 {
     regi_device<xk4   >();
     regi_device<xk8   >();

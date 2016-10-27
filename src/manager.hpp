@@ -28,7 +28,7 @@ class manager
 {
 public:
     ////////////////////
-    explicit manager(asio::io_service&, log::book = log::book());
+    explicit manager(asio::io_service&, std::string conf, log::book = log::book());
 
     void add_device(const info&);
     void remove_device(const info&);
@@ -36,6 +36,7 @@ public:
 private:
     ////////////////////
     asio::io_service& io_;
+    std::string conf_;
     log::book clog_;
 
     using create = std::function<int(asio::io_service&, const std::string& path, const log::book&)>;
