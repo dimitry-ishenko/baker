@@ -25,14 +25,22 @@ void manager::regi_device()
     for(auto regi : traits<XK>::regis)
     {
         clog_(level::info) << "Registering device: " << regi << ' ' << traits<XK>::name << std::endl;
-        regis_.emplace(regi, [conf = conf_](asio::io_service& io, const std::string& path, const log::book& clog)
+        regis_.emplace(regi, [this](asio::io_service& io, const std::string& path, const log::book& clog)
         {
             io.notify_fork(asio::io_service::fork_child);
 
-            XK device(io, path, clog);
-            pie::actions actions(conf, device, clog);
-
-            io.run(); return 0;
+            try
+            {
+                XK device(io, path, clog);
+                pie::actions actions(conf_, device, clog);
+                io.run();
+                return 0;
+            }
+            catch(std::exception& e)
+            {
+                clog_(level::fatal) << "ERROR: " << e.what() << std::endl;
+                return 1;
+            }
         });
     }
 }
