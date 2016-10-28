@@ -25,7 +25,7 @@ class xk_func
 {
 public:
     ////////////////////
-    xk_func(asio::io_service&, const std::string& path, log::book = log::book());
+    xk_func(asio::io_service&, const std::string& path, log::book);
     virtual ~xk_func();
 
     virtual void close();

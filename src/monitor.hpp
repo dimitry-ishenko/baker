@@ -28,7 +28,7 @@ class monitor
 {
 public:
     ////////////////////
-    explicit monitor(asio::io_service& io, log::book = log::book());
+    explicit monitor(asio::io_service& io, log::book);
     ~monitor() noexcept { close(); }
 
     void close() noexcept;

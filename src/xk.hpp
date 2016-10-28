@@ -21,7 +21,7 @@ namespace pie
 class xk4 : public xk16_base
 {
 public:
-    xk4(asio::io_service& io, const std::string& path, log::book clog = log::book()) :
+    xk4(asio::io_service& io, const std::string& path, log::book clog) :
         xk16_base(1, io, path, std::move(clog))
     { }
 };
@@ -30,7 +30,7 @@ public:
 class xk8 : public xk16_base
 {
 public:
-    xk8(asio::io_service& io, const std::string& path, log::book clog = log::book()) :
+    xk8(asio::io_service& io, const std::string& path, log::book clog) :
         xk16_base(2, io, path, std::move(clog))
     { }
 };
@@ -39,7 +39,7 @@ public:
 class xk16 : public xk16_base
 {
 public:
-    xk16(asio::io_service& io, const std::string& path, log::book clog = log::book()) :
+    xk16(asio::io_service& io, const std::string& path, log::book clog) :
         xk16_base(4, io, path, std::move(clog))
     { }
 };

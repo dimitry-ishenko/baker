@@ -20,7 +20,7 @@ class xk16_base : public xk_base
 {
 protected:
     ////////////////////
-    xk16_base(std::size_t rows, asio::io_service&, const std::string& path, log::book = log::book());
+    xk16_base(std::size_t rows, asio::io_service&, const std::string& path, log::book);
 
     press_release process_read(const store&) override;
 };

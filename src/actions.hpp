@@ -25,7 +25,7 @@ class actions
 {
 public:
     ////////////////////
-    actions(const std::string& conf, xk_base&, log::book = log::book());
+    actions(const std::string& conf, xk_base&, log::book);
 
 protected:
     ////////////////////
