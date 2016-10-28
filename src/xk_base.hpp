@@ -11,6 +11,7 @@
 
 #include "sig/signal.hpp"
 #include "xk_func.hpp"
+#include "xk_signal.hpp"
 
 #include <asio/system_timer.hpp>
 #include <initializer_list>
@@ -23,11 +24,8 @@
 namespace pie
 {
 
-using index_t = int;
-static constexpr index_t prog = -1;
-
 ////////////////////////////////////////////////////////////////////////////////
-class xk_base : public xk_func
+class xk_base : public xk_func, public xk_signal
 {
 public:
     ////////////////////
@@ -48,12 +46,6 @@ public:
 
     void reset_critical(index_t n) { critical_.erase(n); }
     void clear_critical() { critical_.clear(); }
-
-    ////////////////////
-    sig::signal_proxy<void(int)>& pressed() { return pressed_; }
-    sig::signal_proxy<void(int)>& released() { return released_; }
-
-    sig::signal_proxy<void(bool)>& locked() { return locked_; }
 
 protected:
     ////////////////////
@@ -80,12 +72,6 @@ protected:
     void schedule_read();
 
     virtual press_release process_read(const store&);
-
-    ////////////////////
-    sig::signal<void(int)> pressed_;
-    sig::signal<void(int)> released_;
-
-    sig::signal<void(bool)> locked_;
 };
 
 }

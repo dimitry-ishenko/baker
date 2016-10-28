@@ -1,0 +1,43 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2016 Dimitry Ishenko
+// Distributed under the GNU GPL v2. For full terms please visit:
+// http://www.gnu.org/licenses/gpl.html
+//
+// Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
+
+////////////////////////////////////////////////////////////////////////////////
+#ifndef PIE_XK_SIGNAL_HPP
+#define PIE_XK_SIGNAL_HPP
+
+#include "sig/signal.hpp"
+
+////////////////////////////////////////////////////////////////////////////////
+namespace pie
+{
+
+////////////////////////////////////////////////////////////////////////////////
+using index_t = int;
+static constexpr index_t prog = -1;
+
+////////////////////////////////////////////////////////////////////////////////
+class xk_signal
+{
+public:
+    ////////////////////
+    sig::signal_proxy<void(index_t)>& pressed() { return pressed_; }
+    sig::signal_proxy<void(index_t)>& released() { return released_; }
+
+    sig::signal_proxy<void(bool)>& locked() { return locked_; }
+
+protected:
+    ////////////////////
+    sig::signal<void(index_t)> pressed_;
+    sig::signal<void(index_t)> released_;
+
+    sig::signal<void(bool)> locked_;
+};
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#endif // PIE_XK_SIGNAL_HPP
