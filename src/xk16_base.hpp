@@ -22,7 +22,7 @@ protected:
     ////////////////////
     xk16_base(std::size_t rows, asio::io_service&, const std::string& path, log::book);
 
-    press_release process_read(const store&) override;
+    press_release process_read(const std::vector<byte>&) override;
 };
 
 }

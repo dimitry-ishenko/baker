@@ -25,7 +25,7 @@ static inline index_t map(index_t index)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-xk16_base::press_release xk16_base::process_read(const pie::store& store)
+xk16_base::press_release xk16_base::process_read(const std::vector<byte>& store)
 {
     press_release pr1 = xk_base::process_read(store), pr2;
 

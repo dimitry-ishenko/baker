@@ -9,12 +9,12 @@
 #ifndef PIE_XK_BASE_HPP
 #define PIE_XK_BASE_HPP
 
+#include "log/book.hpp"
 #include "sig/signal.hpp"
 #include "xk_func.hpp"
 #include "xk_signal.hpp"
 
 #include <asio/system_timer.hpp>
-#include <initializer_list>
 #include <set>
 #include <string>
 #include <tuple>
@@ -25,13 +25,14 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-class xk_base : public xk_func, public xk_signal
+class xk_base : public xk_signal
 {
 public:
     ////////////////////
     xk_base(asio::io_service&, const std::string& path, log::book);
+    virtual ~xk_base() { close(); }
 
-    void close() override;
+    virtual void close();
 
     ////////////////////
     auto device_id() const noexcept { return "Device " + name_; }
@@ -39,9 +40,7 @@ public:
     auto uid() const noexcept { return uid_; }
     auto total() const noexcept { return total_; }
 
-    void set_critical(std::initializer_list<index_t> nn) { critical_.insert(std::move(nn)); }
     void set_critical(index_t n) { critical_.insert(n); }
-
     bool critical(index_t n) const { return critical_.count(n); }
 
     void reset_critical(index_t n) { critical_.erase(n); }
@@ -51,6 +50,8 @@ protected:
     ////////////////////
     asio::system_timer timer_;
     std::string name_;
+    xk_func func_;
+    log::book clog_;
 
     int uid_;
     std::size_t columns_, rows_, total_;
@@ -71,7 +72,7 @@ protected:
     void read();
     void schedule_read();
 
-    virtual press_release process_read(const store&);
+    virtual press_release process_read(const std::vector<byte>&);
 };
 
 }

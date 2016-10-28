@@ -21,13 +21,12 @@ namespace pie
 
 ////////////////////////////////////////////////////////////////////////////////
 xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) :
-    xk_func(io, path, std::move(clog)),
-    timer_(io), name_(path)
+    timer_(io), name_(path), func_(io, path), clog_(std::move(clog))
 {
     auto p = name_.find_last_of('/');
     if(p != std::string::npos) name_.erase(0, p + 1);
 
-    auto store = read_desc();
+    auto store = func_.read_desc();
     auto desc = reinterpret_cast<pie::desc*>(store.data());
 
     uid_ = desc->uid;
@@ -46,16 +45,16 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
                        << dec << endl;
 
     ////////////////////
-    set_leds_on(leds::none);
+    func_.set_leds_on(leds::none);
 
-    set_level(light::blue, 128);
-    set_rows_on(light::blue, row::all);
+    func_.set_level(light::blue, 128);
+    func_.set_rows_on(light::blue, row::all);
 
-    set_level(light::red, 255);
-    set_rows_on(light::red, row::none);
+    func_.set_level(light::red, 255);
+    func_.set_rows_on(light::red, row::none);
 
     ////////////////////
-    request_data();
+    func_.request_data();
     schedule_read();
 }
 
@@ -68,17 +67,17 @@ void xk_base::close()
     asio::error_code ec;
     timer_.cancel(ec);
 
-    set_leds_on(leds::none);
-    set_rows_on(light::blue, row::none);
-    set_rows_on(light::red, row::none);
+    func_.set_leds_on(leds::none);
+    func_.set_rows_on(light::blue, row::none);
+    func_.set_rows_on(light::red, row::none);
 
-    xk_func::close();
+    func_.close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void xk_base::read()
 {
-    auto store = read_data();
+    auto store = func_.read_data();
     if(store.size() + 2 < columns_) throw std::invalid_argument("Input short read");
 
     ////////////////////
@@ -90,7 +89,7 @@ void xk_base::read()
     {
         if(index == pie::prog)
         {
-            set_led(led::red, led::on);
+            func_.set_led(led::red, led::on);
             pressed_(index);
             clog_(level::debug) << "Pressed PS" << std::endl;
         }
@@ -100,8 +99,8 @@ void xk_base::read()
             // button is pressed
             if(pending_ != index && pending_ != none)
             {
-                set_light(light::blue, pending_, total_, light::on);
-                set_light(light::red, pending_, total_, light::off);
+                func_.set_light(light::blue, pending_, total_, light::on);
+                func_.set_light(light::red, pending_, total_, light::off);
                 pending_ = none;
             }
 
@@ -111,8 +110,8 @@ void xk_base::read()
             if(pending_ == index || !critical_.count(index))
             {
                 pending_ = none;
-                set_light(light::blue, index, total_, light::off);
-                set_light(light::red, index, total_, light::on);
+                func_.set_light(light::blue, index, total_, light::off);
+                func_.set_light(light::red, index, total_, light::on);
                 pressed_(index);
                 clog_(level::debug) << "Pressed " << index << std::endl;
             }
@@ -122,8 +121,8 @@ void xk_base::read()
             else
             {
                 pending_ = index;
-                set_light(light::blue, index, total_, light::off);
-                set_light(light::red, index, total_, light::flash);
+                func_.set_light(light::blue, index, total_, light::off);
+                func_.set_light(light::red, index, total_, light::flash);
             }
         }
     }
@@ -133,7 +132,7 @@ void xk_base::read()
     {
         if(index == pie::prog)
         {
-            set_led(led::red, led::off);
+            func_.set_led(led::red, led::off);
             released_(index);
             clog_(level::debug) << "Released PS" << std::endl;
         }
@@ -142,8 +141,8 @@ void xk_base::read()
             // when in locked mode, leave the button red
             if(!lock_)
             {
-                set_light(light::red, index, total_, light::off);
-                set_light(light::blue, index, total_, light::on);
+                func_.set_light(light::red, index, total_, light::off);
+                func_.set_light(light::blue, index, total_, light::on);
             }
             released_(index);
             clog_(level::debug) << "Released " << index << std::endl;
@@ -157,8 +156,8 @@ void xk_base::read()
         pending_ = none;
 
         lock_ = !lock_;
-        set_rows_on(light::blue, lock_ ? row::none : row::all);
-        set_rows_on(light::red, lock_ ? row::all : row::none);
+        func_.set_rows_on(light::blue, lock_ ? row::none : row::all);
+        func_.set_rows_on(light::red, lock_ ? row::all : row::none);
 
         locked_(lock_);
         clog_(level::debug) << (lock_ ? "Locked " : "Unlocked") << std::endl;
@@ -176,7 +175,7 @@ void xk_base::schedule_read()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-xk_base::press_release xk_base::process_read(const store& store)
+xk_base::press_release xk_base::process_read(const std::vector<byte>& store)
 {
     set press, release;
 
