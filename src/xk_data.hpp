@@ -172,7 +172,7 @@ public:
         constexpr _index_helper(set_light_state* p, byte total) : p(p), total(total) { }
         void operator=(byte index)
         {
-            if(index >= total) throw std::out_of_range("set_led_1::_index_helper: index out of range");
+            if(index >= total) throw std::out_of_range("set_led_state::_index_helper: index out of range");
             p->_index = (p->_index >= total ? total : 0) + index;
         }
     };
@@ -202,7 +202,7 @@ struct desc
     byte uid;
     byte type;
 
-    byte _2[5];
+    byte _[5];
 
     byte columns;
     byte rows;
@@ -219,7 +219,7 @@ struct desc
 using store = std::vector<byte>;
 
 constexpr std::size_t send_size = 36;
-constexpr std::size_t max_recv_size = 48; // ???
+constexpr std::size_t max_recv_size = 48;
 
 template<typename T>
 store store_for()
