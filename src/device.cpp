@@ -23,7 +23,7 @@ namespace pie
 
 ////////////////////////////////////////////////////////////////////////////////
 XK_device::XK_device(asio::io_service& io, byte, std::string name, const std::string& path, log::book clog) :
-    name_(std::move(name)), clog_(std::move(clog)), timer_(io), func_(io, path)
+    closing(io), name_(std::move(name)), clog_(std::move(clog)), timer_(io), func_(io, path)
 {
     name_ += " on " + path;
 
@@ -61,7 +61,7 @@ XK_device::XK_device(asio::io_service& io, byte, std::string name, const std::st
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK_device::close()
+void XK_device::close() noexcept
 {
     if(func_.is_open())
     {
@@ -71,9 +71,13 @@ void XK_device::close()
         asio::error_code ec;
         timer_.cancel(ec);
 
-        func_.set_level(light::red, 0, light::fade);
-        func_.set_level(light::blue, 0, light::fade);
-        func_.set_leds_on(leds::none);
+        try
+        {
+            func_.set_level(light::red, 0, light::fade);
+            func_.set_level(light::blue, 0, light::fade);
+            func_.set_leds_on(leds::none);
+        }
+        catch(...) { }
 
         func_.close();
     }

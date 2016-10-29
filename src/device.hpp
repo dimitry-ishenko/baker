@@ -9,6 +9,7 @@
 #ifndef PIE_DEVICE_HPP
 #define PIE_DEVICE_HPP
 
+#include "closing.hpp"
 #include "functions.hpp"
 #include "info.hpp"
 #include "log/book.hpp"
@@ -25,13 +26,13 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-class XK_device : public signals
+class XK_device : public signals, public closing
 {
 public:
     ////////////////////
     virtual ~XK_device() { close(); }
 
-    virtual void close();
+    void close() noexcept override;
 
     ////////////////////
     const std::string& name() const noexcept { return name_; }
