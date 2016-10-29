@@ -6,8 +6,8 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef PIE_XK_SIGNAL_HPP
-#define PIE_XK_SIGNAL_HPP
+#ifndef PIE_SIGNALS_HPP
+#define PIE_SIGNALS_HPP
 
 #include "sig/signal.hpp"
 
@@ -20,7 +20,7 @@ using index_t = int;
 static constexpr index_t prog = -1;
 
 ////////////////////////////////////////////////////////////////////////////////
-class xk_signal
+class signals
 {
 public:
     ////////////////////
@@ -40,4 +40,4 @@ protected:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif // PIE_XK_SIGNAL_HPP
+#endif // PIE_SIGNALS_HPP

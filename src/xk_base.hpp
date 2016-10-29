@@ -12,7 +12,7 @@
 #include "functions.hpp"
 #include "log/book.hpp"
 #include "sig/signal.hpp"
-#include "xk_signal.hpp"
+#include "signals.hpp"
 
 #include <asio/system_timer.hpp>
 #include <set>
@@ -25,7 +25,7 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-class xk_base : public xk_signal
+class xk_base : public signals
 {
 public:
     ////////////////////
