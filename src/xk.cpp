@@ -12,29 +12,29 @@
 namespace pie
 {
 
-constexpr const char* traits<xk4>::name;
-constexpr regi traits<xk4>::regis[];
+constexpr const char* traits<XK_4>::name;
+constexpr regi traits<XK_4>::regis[];
 
-constexpr const char* traits<xk8>::name;
-constexpr regi traits<xk8>::regis[];
+constexpr const char* traits<XK_8>::name;
+constexpr regi traits<XK_8>::regis[];
 
-constexpr const char* traits<xk16>::name;
-constexpr regi traits<xk16>::regis[];
+constexpr const char* traits<XK_16>::name;
+constexpr regi traits<XK_16>::regis[];
 
-constexpr const char* traits<xk24>::name;
-constexpr regi traits<xk24>::regis[];
+constexpr const char* traits<XK_24>::name;
+constexpr regi traits<XK_24>::regis[];
 
-constexpr const char* traits<xkr32>::name;
-constexpr regi traits<xkr32>::regis[];
+constexpr const char* traits<XKR_32>::name;
+constexpr regi traits<XKR_32>::regis[];
 
-constexpr const char* traits<xk60>::name;
-constexpr regi traits<xk60>::regis[];
+constexpr const char* traits<XK_60>::name;
+constexpr regi traits<XK_60>::regis[];
 
-constexpr const char* traits<xk80>::name;
-constexpr regi traits<xk80>::regis[];
+constexpr const char* traits<XK_80>::name;
+constexpr regi traits<XK_80>::regis[];
 
-constexpr const char* traits<xke128>::name;
-constexpr regi traits<xke128>::regis[];
+constexpr const char* traits<XKE_128>::name;
+constexpr regi traits<XKE_128>::regis[];
 
 ////////////////////////////////////////////////////////////////////////////////
 }

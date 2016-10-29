@@ -9,8 +9,8 @@
 #ifndef PIE_ACTIONS_HPP
 #define PIE_ACTIONS_HPP
 
+#include "device.hpp"
 #include "log/book.hpp"
-#include "xk_base.hpp"
 
 #include <map>
 #include <string>
@@ -25,7 +25,7 @@ class actions
 {
 public:
     ////////////////////
-    actions(const std::string& conf, xk_base&, log::book);
+    actions(const std::string& conf, XK_device&, log::book);
 
 protected:
     ////////////////////

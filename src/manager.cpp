@@ -19,19 +19,19 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-template<typename XK>
+template<typename T>
 void manager::regi_device()
 {
-    for(auto regi : traits<XK>::regis)
+    for(auto regi : traits<T>::regis)
     {
-        clog_(level::info) << "Registering device: " << regi << ' ' << traits<XK>::name << std::endl;
+        clog_(level::info) << "Registering device: " << regi << ' ' << traits<T>::name << std::endl;
         regis_.emplace(regi, [this](asio::io_service& io, const std::string& path, const log::book& clog)
         {
             io.notify_fork(asio::io_service::fork_child);
 
             try
             {
-                XK device(io, path, clog);
+                XK<T> device(io, path, clog);
                 pie::actions actions(conf_, device, clog);
                 io.run();
                 return 0;
@@ -49,14 +49,14 @@ void manager::regi_device()
 manager::manager(asio::io_service& io, std::string conf, log::book clog) :
     io_(io), conf_(std::move(conf)), clog_(std::move(clog))
 {
-    regi_device<xk4   >();
-    regi_device<xk8   >();
-    regi_device<xk16  >();
-    regi_device<xk24  >();
-    regi_device<xkr32 >();
-    regi_device<xk60  >();
-    regi_device<xk80  >();
-    regi_device<xke128>();
+    regi_device< XK_4  >();
+    regi_device< XK_8  >();
+    regi_device< XK_16 >();
+    regi_device< XK_24 >();
+    regi_device<XKR_32 >();
+    regi_device< XK_60 >();
+    regi_device< XK_80 >();
+    regi_device<XKE_128>();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -22,7 +22,7 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-actions::actions(const std::string& conf, xk_base& device, log::book clog) :
+actions::actions(const std::string& conf, XK_device& device, log::book clog) :
     clog_(clog)
 {
     clog_(level::info) << "Reading file " << conf << std::endl;
@@ -61,9 +61,8 @@ actions::actions(const std::string& conf, xk_base& device, log::book clog) :
     clog_(level::info) << "Found " << map_.size() << " actions for unit id " << device.uid() << std::endl;
 
     ////////////////////
-    device.clear_critical();
     for(const auto& pair : map_)
-        if(std::get<critical>(pair.second)) device.set_critical(pair.first);
+        if(std::get<critical>(pair.second)) device.critical(pair.first);
 
     device.pressed().connect(std::bind(&actions::pressed, this, std::placeholders::_1));
 }
