@@ -221,4 +221,22 @@ XK_device::press_release XK_device::process_read(const std::vector<byte>& data)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+static inline index_t mapped(index_t index)
+{
+    return ((index & 0x07) << 2) | ((index >> 3) & 0x03);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+XK16_device::press_release XK16_device::process_read(const std::vector<byte>& data)
+{
+    press_release from = XK16_device::process_read(data), to;
+
+    for(auto index : std::get<press>(from)) std::get<press>(to).insert(mapped(index));
+    for(auto index : std::get<release>(from)) std::get<release>(to).insert(mapped(index));
+
+    return to;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 }

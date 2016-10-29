@@ -77,6 +77,21 @@ protected:
     virtual press_release process_read(const std::vector<byte>&);
 };
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+class XK16_device : public XK_device
+{
+protected:
+    ////////////////////
+    XK16_device(asio::io_service& io, byte rows, std::string name, const std::string& path, log::book clog) :
+        XK_device(io, rows, std::move(name), path, std::move(clog))
+    {
+        rows_ = rows;
+    }
+
+    press_release process_read(const std::vector<byte>&) override;
+};
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
