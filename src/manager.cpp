@@ -36,6 +36,15 @@ void manager::regi_device()
                 io.run();
                 return 0;
             }
+            catch(asio::system_error& e)
+            {
+                if(e.code() != asio::error::interrupted)
+                {
+                    clog_(level::fatal) << "ERROR: " << e.what() << std::endl;
+                    return 1;
+                }
+                else return 0;
+            }
             catch(std::exception& e)
             {
                 clog_(level::fatal) << "ERROR: " << e.what() << std::endl;
