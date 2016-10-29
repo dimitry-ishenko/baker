@@ -29,8 +29,20 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
     std::fstream fs(conf, std::ios_base::in);
     if(!fs.is_open()) throw std::runtime_error("Failed to open file");
 
+    ////////////////////
     std::vector<std::string> actions(device.total() * 2);
+
+    static constexpr int none = -1;
+    int freq = none;
+    int red  = none;
+    int blue = none;
+
+    auto section = std::to_string(device.uid()) + '-';
     std::vector<pgm::arg> args;
+
+    args.emplace_back(section + "freq", freq, "");
+    args.emplace_back(section + "red" , red , "");
+    args.emplace_back(section + "blue", blue, "");
 
     // create args in the form <uid>-<index>{*}
     for(std::size_t n = 0; n < actions.size(); ++n)
@@ -38,7 +50,7 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
         auto index = n / 2;
         bool critical = n & 1;
 
-        auto name = std::to_string(device.uid()) + '-' + std::to_string(index);
+        auto name = section + std::to_string(index);
         if(critical) name += '*';
 
         args.emplace_back(name, actions[n], "");
@@ -63,6 +75,10 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
     ////////////////////
     for(const auto& pair : map_)
         if(std::get<critical>(pair.second)) device.critical(pair.first);
+
+    if(freq != none) device.set_freq(static_cast<byte>(freq));
+    if(red  != none) device.set_max_level(light::red, static_cast<byte>(red));
+    if(blue != none) device.set_max_level(light::blue, static_cast<byte>(blue));
 
     device.pressed().connect(std::bind(&actions::pressed, this, std::placeholders::_1));
 }
