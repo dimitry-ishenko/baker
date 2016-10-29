@@ -6,8 +6,8 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#ifndef PIE_XK_FUNC_HPP
-#define PIE_XK_FUNC_HPP
+#ifndef PIE_FUNCTIONS_HPP
+#define PIE_FUNCTIONS_HPP
 
 #include "operators.hpp"
 
@@ -85,12 +85,12 @@ struct desc
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-class xk_func
+class functions
 {
 public:
     ////////////////////
-    xk_func(asio::io_service&, const std::string& path);
-    ~xk_func() { close(); }
+    functions(asio::io_service&, const std::string& path);
+    ~functions() { close(); }
 
     void close();
 
@@ -131,4 +131,4 @@ DECLARE_OPERATORS(pie::leds::on_t)
 DECLARE_OPERATORS(pie::row::row_t)
 
 ////////////////////////////////////////////////////////////////////////////////
-#endif // PIE_XK_FUNC_HPP
+#endif // PIE_FUNCTIONS_HPP

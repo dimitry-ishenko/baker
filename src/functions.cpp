@@ -7,7 +7,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "errno_error.hpp"
-#include "xk_func.hpp"
+#include "functions.hpp"
 
 #include <array>
 #include <cstring> // std::memcpy
@@ -178,7 +178,7 @@ ASSERT_SIZE(reboot)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-xk_func::xk_func(asio::io_service& io, const std::string& path) :
+functions::functions(asio::io_service& io, const std::string& path) :
     stream_(io)
 {
     auto fd = ::open(path.data(), O_RDWR);
@@ -188,14 +188,14 @@ xk_func::xk_func(asio::io_service& io, const std::string& path) :
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::close()
+void functions::close()
 {
     asio::error_code ec;
     stream_.close(ec);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_leds_on(pie::leds::on_t on)
+void functions::set_leds_on(pie::leds::on_t on)
 {
     pie::set_leds_on data;
     data.on = on;
@@ -203,7 +203,7 @@ void xk_func::set_leds_on(pie::leds::on_t on)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_led(pie::led::color_t color, pie::led::state_t state)
+void functions::set_led(pie::led::color_t color, pie::led::state_t state)
 {
     pie::set_led_state data;
     data.color = color;
@@ -212,7 +212,7 @@ void xk_func::set_led(pie::led::color_t color, pie::led::state_t state)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_uid(byte uid)
+void functions::set_uid(byte uid)
 {
     pie::set_uid data;
     data.uid = uid;
@@ -220,14 +220,14 @@ void xk_func::set_uid(byte uid)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::request_desc()
+void functions::request_desc()
 {
     pie::request_desc data;
     asio::write(stream_, asio::buffer(&data, sizeof(data)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_stamp(pie::stamp::enable_t enable)
+void functions::set_stamp(pie::stamp::enable_t enable)
 {
     pie::enable_stamp data;
     data.enable = enable;
@@ -235,14 +235,14 @@ void xk_func::set_stamp(pie::stamp::enable_t enable)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::request_data()
+void functions::request_data()
 {
     pie::request_data data;
     asio::write(stream_, asio::buffer(&data, sizeof(data)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_level(pie::light::color_t color, byte value)
+void functions::set_level(pie::light::color_t color, byte value)
 {
     level_[color] = value;
     pie::set_light_level data;
@@ -251,14 +251,14 @@ void xk_func::set_level(pie::light::color_t color, byte value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::toggle_lights()
+void functions::toggle_lights()
 {
     pie::toggle_lights data;
     asio::write(stream_, asio::buffer(&data, sizeof(data)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
+void functions::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
 {
     pie::set_rows_on data;
     data.color = color;
@@ -267,7 +267,7 @@ void xk_func::set_rows_on(pie::light::color_t color, pie::row::row_t rows)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_light(pie::light::color_t color, byte index, byte total, pie::light::state_t state)
+void functions::set_light(pie::light::color_t color, byte index, byte total, pie::light::state_t state)
 {
     pie::set_light_state data;
     data.color(total) = color;
@@ -277,7 +277,7 @@ void xk_func::set_light(pie::light::color_t color, byte index, byte total, pie::
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::set_freq(byte freq)
+void functions::set_freq(byte freq)
 {
     pie::set_freq data;
     data.freq = freq;
@@ -285,14 +285,14 @@ void xk_func::set_freq(byte freq)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void xk_func::reboot()
+void functions::reboot()
 {
     pie::reboot data;
     asio::write(stream_, asio::buffer(&data, sizeof(data)));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-pie::desc xk_func::read_desc()
+pie::desc functions::read_desc()
 {
     request_desc();
 
@@ -304,7 +304,7 @@ pie::desc xk_func::read_desc()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<byte> xk_func::read_data()
+std::vector<byte> functions::read_data()
 {
     std::vector<byte> data(48); // arbitrary
     auto size = stream_.read_some(asio::buffer(data));

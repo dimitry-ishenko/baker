@@ -9,9 +9,9 @@
 #ifndef PIE_XK_BASE_HPP
 #define PIE_XK_BASE_HPP
 
+#include "functions.hpp"
 #include "log/book.hpp"
 #include "sig/signal.hpp"
-#include "xk_func.hpp"
 #include "xk_signal.hpp"
 
 #include <asio/system_timer.hpp>
@@ -50,7 +50,7 @@ protected:
     ////////////////////
     asio::system_timer timer_;
     std::string name_;
-    xk_func func_;
+    functions func_;
     log::book clog_;
 
     int uid_;
