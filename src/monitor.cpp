@@ -14,7 +14,6 @@
 
 #include <poll.h>
 
-using namespace std::literals::chrono_literals;
 using log::level;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,8 +39,10 @@ monitor::monitor(asio::io_service& io, log::book clog) try :
     udev_monitor_enable_receiving(monitor_);
 
     ////////////////////
+    using namespace std::literals::chrono_literals;
+
     clog_(level::trace) << "Scheduling enumerate" << std::endl;
-    timer_.expires_from_now(0s);
+    timer_.expires_from_now(0ms);
     timer_.async_wait(std::bind(&monitor::enumerate, this));
 }
 catch(...)
@@ -135,8 +136,10 @@ void monitor::enumerate()
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::schedule_poll()
 {
+    using namespace std::literals::chrono_literals;
+
     clog_(level::trace) << "Scheduling poll" << std::endl;
-    timer_.expires_from_now(0s);
+    timer_.expires_from_now(0ms);
     timer_.async_wait(std::bind(&monitor::poll, this));
 }
 
