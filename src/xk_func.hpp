@@ -60,12 +60,15 @@ namespace row
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+#pragma pack(push, 1)
+
 struct desc
 {
     byte uid;
     byte type;
 
-    byte _[5];
+    byte mode;
+    byte misc[4];
 
     byte columns;
     byte rows;
@@ -74,11 +77,11 @@ struct desc
 
     byte version;
     word pid;
+
+    byte _[24];
 };
 
-////////////////////////////////////////////////////////////////////////////////
-constexpr std::size_t send_size = 36;
-constexpr std::size_t max_recv_size = 48;
+#pragma pack(pop)
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,8 +113,8 @@ public:
     void reboot();
 
     ////////////////////
-    std::vector<byte> read_desc();
-    std::vector<byte> read_data(bool request = false);
+    pie::desc read_desc();
+    std::vector<byte> read_data();
 
 protected:
     ////////////////////

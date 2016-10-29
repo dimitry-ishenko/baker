@@ -9,6 +9,8 @@
 #include "errno_error.hpp"
 #include "xk_func.hpp"
 
+#include <array>
+#include <cstring> // std::memcpy
 #include <stdexcept>
 
 #include <sys/types.h>
@@ -20,13 +22,15 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-#pragma pack(push, 1)
+constexpr std::size_t send_size = 36;
 
 #define PADDING_0 byte _[send_size - sizeof(id) - sizeof(command)] { };
 #define PADDING_1(one) byte _[send_size - sizeof(id) - sizeof(command) - sizeof(one)] { };
 #define PADDING_2(one, two) byte _[send_size - sizeof(id) - sizeof(command) - sizeof(one) - sizeof(two)] { };
 
 #define ASSERT_SIZE(name) static_assert(sizeof(name) == send_size, "Incorrect size of " # name);
+
+#pragma pack(push, 1)
 
 struct set_leds_on
 {
@@ -288,24 +292,21 @@ void xk_func::reboot()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<byte> xk_func::read_desc()
+pie::desc xk_func::read_desc()
 {
     request_desc();
 
-    std::vector<byte> desc(max_recv_size, 0);
-    auto size = stream_.read_some(asio::buffer(desc));
-    if(size < sizeof(pie::desc)) throw std::invalid_argument("Descriptor short read");
-    desc.resize(size);
+    pie::desc desc;
+    auto size = stream_.read_some(asio::buffer(&desc, sizeof(desc)));
+    if(size < sizeof(desc) - sizeof(desc._)) throw std::invalid_argument("Descriptor short read");
 
     return desc;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-std::vector<byte> xk_func::read_data(bool request)
+std::vector<byte> xk_func::read_data()
 {
-    if(request) request_data();
-
-    std::vector<byte> data(max_recv_size, 0);
+    std::vector<byte> data(48); // arbitrary
     auto size = stream_.read_some(asio::buffer(data));
     data.resize(size);
 

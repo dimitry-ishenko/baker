@@ -26,12 +26,11 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
     auto p = name_.find_last_of('/');
     if(p != std::string::npos) name_.erase(0, p + 1);
 
-    auto store = func_.read_desc();
-    auto desc = reinterpret_cast<pie::desc*>(store.data());
+    auto desc = func_.read_desc();
 
-    uid_ = desc->uid;
-    columns_ = desc->columns;
-    rows_ = desc->rows;
+    uid_ = desc.uid;
+    columns_ = desc.columns;
+    rows_ = desc.rows;
     total_ = columns_ * CHAR_BIT;
 
     prev_.resize(columns_);
@@ -40,8 +39,8 @@ xk_base::xk_base(asio::io_service& io, const std::string& path, log::book clog) 
     clog_(level::info) << device_id()
                        << ": unit id " << uid_
                        << ", size " << columns_ << " x " << rows_
-                       << ", version " << static_cast<int>(desc->version)
-                       << ", pid " << hex << setfill('0') << setw(4) << desc->pid
+                       << ", version " << static_cast<int>(desc.version)
+                       << ", pid " << hex << setfill('0') << setw(4) << desc.pid
                        << dec << endl;
 
     ////////////////////
