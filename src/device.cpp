@@ -63,17 +63,20 @@ XK_device::XK_device(asio::io_service& io, byte, std::string name, const std::st
 ////////////////////////////////////////////////////////////////////////////////
 void XK_device::close()
 {
-    clog_(level::info) << name_ << ": closing" << std::endl;
+    if(func_.is_open())
+    {
+        clog_(level::info) << name_ << ": closing" << std::endl;
 
-    clog_(level::debug) << "Cancelling read" << std::endl;
-    asio::error_code ec;
-    timer_.cancel(ec);
+        clog_(level::debug) << "Cancelling read" << std::endl;
+        asio::error_code ec;
+        timer_.cancel(ec);
 
-    func_.set_level(light::red, 0, light::fade);
-    func_.set_level(light::blue, 0, light::fade);
-    func_.set_leds_on(leds::none);
+        func_.set_level(light::red, 0, light::fade);
+        func_.set_level(light::blue, 0, light::fade);
+        func_.set_leds_on(leds::none);
 
-    func_.close();
+        func_.close();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
