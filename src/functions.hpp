@@ -95,6 +95,7 @@ public:
     ~functions() { close(); }
 
     void close();
+    bool is_open() const { return stream_.is_open(); }
 
     ////////////////////
     void set_leds_on(pie::leds::on_t);

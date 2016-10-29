@@ -192,8 +192,11 @@ functions::functions(asio::io_service& io, const std::string& path) :
 ////////////////////////////////////////////////////////////////////////////////
 void functions::close()
 {
-    asio::error_code ec;
-    stream_.close(ec);
+    if(stream_.is_open())
+    {
+        asio::error_code ec;
+        stream_.close(ec);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
