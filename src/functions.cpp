@@ -89,7 +89,7 @@ struct set_light_level
 {
     const byte id = 0;
     const byte command = 187;
-    byte level[light::color_t::end + 1];
+    byte level[light::color_t::size];
     PADDING_1(level)
 };
 ASSERT_SIZE(set_light_level)
@@ -132,7 +132,7 @@ public:
         byte total;
     public:
         constexpr _color_helper(set_light_state* p, byte total) : p(p), total(total) { }
-        constexpr void operator=(light::color_t color)
+        void operator=(light::color_t color)
         {
             if(color == light::blue && p->_index >= total) p->_index -= total;
             else if(color == light::red && p->_index < total) p->_index += total;

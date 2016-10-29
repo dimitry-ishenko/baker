@@ -43,7 +43,7 @@ namespace stamp
 
 namespace light
 {
-    enum color_t : byte { blue, red, end = red };
+    enum color_t : byte { blue, red, size = red + 1 };
     enum state_t : byte { off, on, flash };
 }
 
@@ -121,7 +121,7 @@ protected:
     asio::posix::stream_descriptor stream_;
 
     // used by set level command
-    byte level_[pie::light::color_t::end + 1] { };
+    byte level_[pie::light::color_t::size];
 };
 
 }
