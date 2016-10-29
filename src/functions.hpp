@@ -45,6 +45,8 @@ namespace light
 {
     enum color_t : byte { blue, red, size = red + 1 };
     enum state_t : byte { off, on, flash };
+
+    enum fade_t { fade };
 }
 
 namespace row
@@ -104,6 +106,7 @@ public:
     void request_data();
 
     void set_level(pie::light::color_t, byte level);
+    void set_level(pie::light::color_t, byte level, light::fade_t);
 
     void toggle_lights();
     void set_rows_on(pie::light::color_t, pie::row::row_t);

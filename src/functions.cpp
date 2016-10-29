@@ -10,8 +10,10 @@
 #include "functions.hpp"
 
 #include <array>
+#include <chrono>
 #include <cstring> // std::memcpy
 #include <stdexcept>
+#include <thread>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -248,6 +250,19 @@ void functions::set_level(pie::light::color_t color, byte value)
     pie::set_light_level data;
     std::memcpy(data.level, level_, sizeof(level_));
     asio::write(stream_, asio::buffer(&data, sizeof(data)));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void functions::set_level(pie::light::color_t color, byte value, light::fade_t)
+{
+    byte step = (value > level_[color]) - (level_[color] > value);
+
+    for(byte level = level_[color]; level != value; level += step)
+    {
+        set_level(color, level);
+        using namespace std::literals::chrono_literals;
+        std::this_thread::sleep_for(1ms);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
