@@ -4,7 +4,7 @@ TARGET		:= baker
 SUBDIRS		:= $(shell find src -type d)
 SOURCES		:=
 INCLUDES	:= -Ilib
-LIBRARIES	:= -Llib -lcore -ludev
+LIBRARIES	:= -Llib -lcore -ludev -pthread
 DEFINES		:= -DASIO_STANDALONE
 OBJECTS		:=
 

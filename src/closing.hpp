@@ -1,0 +1,41 @@
+////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2016 Dimitry Ishenko
+// Distributed under the GNU GPL v2. For full terms please visit:
+// http://www.gnu.org/licenses/gpl.html
+//
+// Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
+
+////////////////////////////////////////////////////////////////////////////////
+#ifndef PIE_CLOSING_HPP
+#define PIE_CLOSING_HPP
+
+#include <asio.hpp>
+
+////////////////////////////////////////////////////////////////////////////////
+namespace pie
+{
+
+////////////////////////////////////////////////////////////////////////////////
+class closing
+{
+public:
+    ////////////////////
+    virtual ~closing() noexcept;
+
+    virtual void close() noexcept = 0;
+
+protected:
+    ////////////////////
+    explicit closing(asio::io_service& io) : sigset_(io, SIGINT, SIGTERM)
+    {
+        sigset_.async_wait([this](const asio::error_code&, int) { close(); });
+    }
+
+private:
+    asio::signal_set sigset_;
+};
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#endif // PIE_CLOSING_HPP
