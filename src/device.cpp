@@ -16,7 +16,6 @@
 #include <type_traits>
 
 using log::level;
-using namespace std::literals::chrono_literals;
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
@@ -26,7 +25,7 @@ namespace pie
 XK_device::XK_device(asio::io_service& io, byte, std::string name, const std::string& path, log::book clog) :
     name_(std::move(name)), clog_(std::move(clog)), timer_(io), func_(io, path)
 {
-    name += " on " + path;
+    name_ += " on " + path;
 
     auto desc = func_.read_desc();
 
@@ -172,6 +171,8 @@ void XK_device::read()
 ////////////////////////////////////////////////////////////////////////////////
 void XK_device::schedule_read()
 {
+    using namespace std::literals::chrono_literals;
+
     clog_(level::trace) << "Scheduling read" << std::endl;
     timer_.expires_from_now(0ms);
     timer_.async_wait(std::bind(&XK_device::read, this));

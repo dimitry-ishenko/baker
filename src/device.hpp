@@ -34,6 +34,8 @@ public:
     virtual void close();
 
     ////////////////////
+    const std::string& name() const noexcept { return name_; }
+
     auto uid() const noexcept { return uid_; }
     auto total() const noexcept { return total_; }
 
