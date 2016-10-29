@@ -8,13 +8,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "actions.hpp"
 #include "pgm/args.hpp"
-#include "proc/process.hpp"
 
 #include <fstream>
 #include <stdexcept>
 #include <vector>
 
-using namespace std::literals::chrono_literals;
 using log::level;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,17 +82,23 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+actions::~actions()
+{
+    proc_.get_status();
+    proc_.detach();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void actions::pressed(index_t index)
 {
     auto ri = map_.find(index);
     if(ri != map_.end())
     {
-        proc::process p([c = std::get<command>(ri->second)]()
+        proc_.get_status();
+        proc_ = proc::process([c = std::get<command>(ri->second)]()
         {
             return proc::this_process::replace("/bin/sh", "-c", std::move(c));
         });
-        p.wait_for(0s);
-        p.detach();
     }
 }
 

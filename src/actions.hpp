@@ -11,6 +11,7 @@
 
 #include "device.hpp"
 #include "log/book.hpp"
+#include "proc/process.hpp"
 
 #include <map>
 #include <string>
@@ -26,6 +27,7 @@ class actions
 public:
     ////////////////////
     actions(const std::string& conf, XK_device&, log::book);
+    ~actions();
 
 protected:
     ////////////////////
@@ -36,6 +38,7 @@ protected:
 
     std::map<index_t, action> map_;
 
+    proc::process proc_;
     void pressed(index_t);
 };
 
