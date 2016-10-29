@@ -40,7 +40,7 @@ monitor::monitor(asio::io_service& io, log::book clog) try :
     udev_monitor_enable_receiving(monitor_);
 
     ////////////////////
-    clog_(level::debug) << "Scheduling enumerate" << std::endl;
+    clog_(level::trace) << "Scheduling enumerate" << std::endl;
     timer_.expires_from_now(0s);
     timer_.async_wait(std::bind(&monitor::enumerate, this));
 }
@@ -135,7 +135,7 @@ void monitor::enumerate()
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::schedule_poll()
 {
-    clog_(level::debug) << "Scheduling poll" << std::endl;
+    clog_(level::trace) << "Scheduling poll" << std::endl;
     timer_.expires_from_now(0s);
     timer_.async_wait(std::bind(&monitor::poll, this));
 }
