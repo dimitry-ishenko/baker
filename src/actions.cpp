@@ -35,7 +35,7 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
     int red  = none;
     int blue = none;
 
-    auto section = std::to_string(device.uid()) + '-';
+    auto section = std::to_string(static_cast<int>(device.uid()));
     std::vector<pgm::arg> args;
 
     args.emplace_back(section + "freq", freq, "");
@@ -48,7 +48,7 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
         auto index = n / 2;
         bool critical = n & 1;
 
-        auto name = section + std::to_string(index);
+        auto name = section + '-' + std::to_string(index);
         if(critical) name += '*';
 
         args.emplace_back(name, actions[n], "");
@@ -62,13 +62,13 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
             auto index = n / 2;
             bool critical = n & 1;
 
-            auto name = std::to_string(device.uid()) + ':' + std::to_string(index);
+            auto name = section + ':' + std::to_string(index);
             if(critical) name += '*';
             clog_(level::debug) << "Found action: " << name << "\t= " << actions[n] << std::endl;
 
             map_.emplace(index, std::make_tuple(critical, std::move(actions[n])));
         }
-    clog_(level::info) << "Found " << map_.size() << " actions for unit id " << device.uid() << std::endl;
+    clog_(level::info) << "Found " << map_.size() << " actions for device " << device.name() << std::endl;
 
     ////////////////////
     for(const auto& pair : map_)
