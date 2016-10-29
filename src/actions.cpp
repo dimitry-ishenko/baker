@@ -77,8 +77,8 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
         if(std::get<critical>(pair.second)) device.critical(pair.first);
 
     if(freq != none) device.set_freq(static_cast<byte>(freq));
-    if(red  != none) device.set_max_level(light::red, static_cast<byte>(red));
-    if(blue != none) device.set_max_level(light::blue, static_cast<byte>(blue));
+    if(red  != none) device.set_level(light::red, static_cast<byte>(red));
+    if(blue != none) device.set_level(light::blue, static_cast<byte>(blue));
 
     device.pressed().connect(std::bind(&actions::pressed, this, std::placeholders::_1));
 }

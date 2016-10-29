@@ -41,7 +41,7 @@ public:
 
     ////////////////////
     void set_freq(byte freq) { func_.set_freq(freq); }
-    void set_max_level(light::color_t color, byte level) { func_.set_level(color, level); }
+    void set_level(light::color_t color, byte level) { func_.set_level(color, level, light::fade); }
 
 protected:
     ////////////////////
