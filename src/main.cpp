@@ -76,18 +76,19 @@ int main(int argc, char* argv[])
 
         ////////////////////
         clog(level::info) << "Starting baker" << std::endl;
+        {
+            asio::io_service io;
 
-        asio::io_service io;
+            pie::monitor monitor(io, clog);
+            pie::manager manager(io, conf, clog);
 
-        pie::monitor monitor(io, clog);
-        pie::manager manager(io, conf, clog);
+            monitor.device_added().connect(std::bind(&pie::manager::add_device, &manager, std::placeholders::_1));
+            monitor.device_removed().connect(std::bind(&pie::manager::remove_device, &manager, std::placeholders::_1));
 
-        monitor.device_added().connect(std::bind(&pie::manager::add_device, &manager, std::placeholders::_1));
-        monitor.device_removed().connect(std::bind(&pie::manager::remove_device, &manager, std::placeholders::_1));
-
-        catch_interrupted(io.run());
-
+            catch_interrupted(io.run());
+        }
         clog(level::info) << "Exiting baker" << std::endl;
+
         return 0;
     }
     catch(std::exception& e)
