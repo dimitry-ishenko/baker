@@ -13,28 +13,28 @@ namespace pie
 {
 
 constexpr pie::params traits<XK_4>::params;
-constexpr regi traits<XK_4>::regis[];
+constexpr std::initializer_list<regi> traits<XK_4>::regis;
 
 constexpr pie::params traits<XK_8>::params;
-constexpr regi traits<XK_8>::regis[];
+constexpr std::initializer_list<regi> traits<XK_8>::regis;
 
 constexpr pie::params traits<XK_16>::params;
-constexpr regi traits<XK_16>::regis[];
+constexpr std::initializer_list<regi> traits<XK_16>::regis;
 
 constexpr pie::params traits<XK_24>::params;
-constexpr regi traits<XK_24>::regis[];
+constexpr std::initializer_list<regi> traits<XK_24>::regis;
 
 constexpr pie::params traits<XKR_32>::params;
-constexpr regi traits<XKR_32>::regis[];
+constexpr std::initializer_list<regi> traits<XKR_32>::regis;
 
 constexpr pie::params traits<XK_60>::params;
-constexpr regi traits<XK_60>::regis[];
+constexpr std::initializer_list<regi> traits<XK_60>::regis;
 
 constexpr pie::params traits<XK_80>::params;
-constexpr regi traits<XK_80>::regis[];
+constexpr std::initializer_list<regi> traits<XK_80>::regis;
 
 constexpr pie::params traits<XKE_128>::params;
-constexpr regi traits<XKE_128>::regis[];
+constexpr std::initializer_list<regi> traits<XKE_128>::regis;
 
 ////////////////////////////////////////////////////////////////////////////////
 }

@@ -12,6 +12,8 @@
 #include "device.hpp"
 #include "types.hpp"
 
+#include <initializer_list>
+
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
 {
@@ -43,7 +45,11 @@ template<>
 struct traits<XK_4>
 {
     static constexpr pie::params params = { 1 };
-    static constexpr regi regis[] = { { 0x05f3, 0x0467, 0 }, { 0x05f3, 0x0469, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x0467, 0 },
+        { 0x05f3, 0x0469, 0 },
+    };
     using base = device_XK16;
 };
 
@@ -51,7 +57,11 @@ template<>
 struct traits<XK_8>
 {
     static constexpr pie::params params = { 2 };
-    static constexpr regi regis[] = { { 0x05f3, 0x046a, 0 }, { 0x05f3, 0x046c, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x046a, 0 },
+        { 0x05f3, 0x046c, 0 },
+    };
     using base = device_XK16;
 };
 
@@ -59,7 +69,11 @@ template<>
 struct traits<XK_16>
 {
     static constexpr pie::params params = { 4 };
-    static constexpr regi regis[] = { { 0x05f3, 0x0419, 0 }, { 0x05f3, 0x041b, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x0419, 0 },
+        { 0x05f3, 0x041b, 0 },
+    };
     using base = device_XK16;
 };
 
@@ -67,7 +81,11 @@ template<>
 struct traits<XK_24>
 {
     static constexpr pie::params params = {};
-    static constexpr regi regis[] = { { 0x05f3, 0x0403, 0 }, { 0x05f3, 0x0405, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x0403, 0 },
+        { 0x05f3, 0x0405, 0 },
+    };
     using base = device;
 };
 
@@ -75,7 +93,11 @@ template<>
 struct traits<XKR_32>
 {
     static constexpr pie::params params = {};
-    static constexpr regi regis[] = { { 0x05f3, 0x04ff, 0 }, { 0x05f3, 0x0502, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x04ff, 0 },
+        { 0x05f3, 0x0502, 0 },
+    };
     using base = device;
 };
 
@@ -83,7 +105,11 @@ template<>
 struct traits<XK_60>
 {
     static constexpr pie::params params = {};
-    static constexpr regi regis[] = { { 0x05f3, 0x0461, 0 }, { 0x05f3, 0x0463, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x0461, 0 },
+        { 0x05f3, 0x0463, 0 },
+    };
     using base = device;
 };
 
@@ -91,7 +117,11 @@ template<>
 struct traits<XK_80>
 {
     static constexpr pie::params params = {};
-    static constexpr regi regis[] = { { 0x05f3, 0x0441, 0 }, { 0x05f3, 0x0443, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x0441, 0 },
+        { 0x05f3, 0x0443, 0 },
+    };
     using base = device;
 };
 
@@ -99,7 +129,11 @@ template<>
 struct traits<XKE_128>
 {
     static constexpr pie::params params = {};
-    static constexpr regi regis[] = { { 0x05f3, 0x04cb, 0 }, { 0x05f3, 0x04ce, 0 } };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x04cb, 0 },
+        { 0x05f3, 0x04ce, 0 },
+    };
     using base = device;
 };
 
