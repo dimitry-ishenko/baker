@@ -9,14 +9,12 @@
 #ifndef PIE_MANAGER_HPP
 #define PIE_MANAGER_HPP
 
-#include "info.hpp"
 #include "log/book.hpp"
-#include "xk.hpp"
+#include "types.hpp"
 
 #include <asio.hpp>
 #include <functional>
 #include <map>
-#include <memory>
 #include <string>
 
 ////////////////////////////////////////////////////////////////////////////////

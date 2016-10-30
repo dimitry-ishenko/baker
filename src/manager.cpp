@@ -7,17 +7,52 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "actions.hpp"
-#include "closing.hpp"
+#include "closing.hpp" // catch_interrupted
 #include "manager.hpp"
 #include "proc/process.hpp"
-
-#include <stdexcept>
+#include "xk.hpp"
 
 using log::level;
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
 {
+
+////////////////////////////////////////////////////////////////////////////////
+manager::manager(asio::io_service& io, std::string conf, log::book clog) :
+    io_(io), conf_(std::move(conf)), clog_(std::move(clog))
+{
+    regi_device< XK_4  >();
+    regi_device< XK_8  >();
+    regi_device< XK_16 >();
+    regi_device< XK_24 >();
+    regi_device<XKR_32 >();
+    regi_device< XK_60 >();
+    regi_device< XK_80 >();
+    regi_device<XKE_128>();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void manager::add_device(const pie::info& info)
+{
+    auto ri = regis_.find(info.regi);
+    if(ri != regis_.end())
+    {
+        io_.notify_fork(asio::io_service::fork_prepare);
+        proc::process p(std::cref(ri->second), std::ref(io_), info.path, clog_);
+        io_.notify_fork(asio::io_service::fork_parent);
+
+        clog_(level::info) << "Started process " << p.get_id() << " for " << info.path << std::endl;
+        p.detach();
+    }
+    else clog_(level::info) << "Ignoring " << info.path << std::endl;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void manager::remove_device(const pie::info& info)
+{
+    clog_(level::debug) << "Removed device: " << info.path << std::endl;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 template<typename T>
@@ -45,47 +80,6 @@ void manager::regi_device()
             }
         });
     }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-manager::manager(asio::io_service& io, std::string conf, log::book clog) :
-    io_(io), conf_(std::move(conf)), clog_(std::move(clog))
-{
-    regi_device< XK_4  >();
-    regi_device< XK_8  >();
-    regi_device< XK_16 >();
-    regi_device< XK_24 >();
-    regi_device<XKR_32 >();
-    regi_device< XK_60 >();
-    regi_device< XK_80 >();
-    regi_device<XKE_128>();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void manager::add_device(const pie::info& info)
-{
-    auto ri = regis_.find(info.regi);
-    if(ri != regis_.end())
-    {
-        io_.notify_fork(asio::io_service::fork_prepare);
-        proc::process p(std::cref(ri->second), std::ref(io_), info.path, clog_);
-
-        if(p.get_status() == proc::process::running)
-        {
-            io_.notify_fork(asio::io_service::fork_parent);
-
-            clog_(level::info) << "Started process " << p.get_id() << " for " << info.path << std::endl;
-            p.detach();
-        }
-        else throw std::runtime_error("Failed to start process");
-    }
-    else clog_(level::info) << "Ignoring " << info.path << std::endl;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void manager::remove_device(const pie::info& info)
-{
-    clog_(level::debug) << "Removed device: " << info.path << std::endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
