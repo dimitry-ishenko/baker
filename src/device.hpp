@@ -11,9 +11,9 @@
 
 #include "closing.hpp"
 #include "functions.hpp"
-#include "info.hpp"
 #include "log/book.hpp"
 #include "signals.hpp"
+#include "types.hpp"
 
 #include <asio/system_timer.hpp>
 #include <set>
@@ -71,7 +71,7 @@ protected:
 
     buttons critical_;
 
-    static constexpr index_t none = -1;
+    static constexpr index_t none = static_cast<index_t>(-1);
     index_t pending_ = none;
 
     void read();

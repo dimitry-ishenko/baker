@@ -6,14 +6,11 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "proc/process.hpp"
 #include "device.hpp"
 
 #include <chrono>
 #include <climits> // CHAR_BIT
 #include <iomanip>
-#include <thread>
-#include <type_traits>
 
 using log::level;
 
@@ -41,7 +38,7 @@ XK_device::XK_device(asio::io_service& io, byte, std::string name, const std::st
                                 << ", size " << int(columns_) << " x " << int(rows_)
                                 << ", version " << int(desc.version)
                                 << ", pid " << setfill('0') << setw(4) << hex << desc.pid << dec
-                                << endl;
+                       << endl;
 
     ////////////////////
     func_.set_leds_on(leds::none);
@@ -206,8 +203,7 @@ XK_device::press_release XK_device::process_read(const std::vector<byte>& data)
     for(byte c = 0; c < columns_; ++c, ++ri)
     {
         // when locked, don't allow new button presses
-        // and only let the buttons that have been
-        // pressed before the lock to be released
+        // and only let the buttons pressed before the lock to be released
         byte on  = !lock_ ? *ri & ~prev_[c] : 0;
         byte off =         ~*ri &  prev_[c];
         prev_[c] = !lock_ ? *ri :  prev_[c] & *ri;
@@ -232,13 +228,14 @@ XK_device::press_release XK_device::process_read(const std::vector<byte>& data)
 ////////////////////////////////////////////////////////////////////////////////
 static inline index_t mapped(index_t index)
 {
-    return ((index & 0x07) << 2) | ((index >> 3) & 0x03);
+    return static_cast<index_t>((index & 0x07) << 2)
+         | static_cast<index_t>((index >> 3) & 0x03);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 XK16_device::press_release XK16_device::process_read(const std::vector<byte>& data)
 {
-    press_release from = XK16_device::process_read(data), to;
+    press_release from = XK_device::process_read(data), to;
 
     for(auto index : std::get<press>(from)) std::get<press>(to).insert(mapped(index));
     for(auto index : std::get<release>(from)) std::get<release>(to).insert(mapped(index));
