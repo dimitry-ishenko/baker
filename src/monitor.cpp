@@ -12,8 +12,6 @@
 #include <stdexcept>
 #include <string>
 
-#include <poll.h>
-
 using log::level;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,7 +20,7 @@ namespace pie
 
 ////////////////////////////////////////////////////////////////////////////////
 monitor::monitor(asio::io_service& io, log::book clog) try :
-    timer_(io), clog_(std::move(clog))
+    timer_(io), clog_(std::move(clog)), stream_(io)
 {
     clog_(level::info) << "Connecting to udev" << std::endl;
     udev_ = udev_new();
@@ -37,6 +35,8 @@ monitor::monitor(asio::io_service& io, log::book clog) try :
 
     clog_(level::debug) << "Enabling receiving" << std::endl;
     udev_monitor_enable_receiving(monitor_);
+
+    stream_.assign(udev_monitor_get_fd(monitor_));
 
     ////////////////////
     using namespace std::literals::chrono_literals;
@@ -146,29 +146,23 @@ void monitor::schedule_poll()
 ////////////////////////////////////////////////////////////////////////////////
 void monitor::poll()
 {
-    pollfd fds[] =
-    {
-        { udev_monitor_get_fd(monitor_), POLLIN, 0 },
-    };
+    stream_.read_some(asio::null_buffers());
 
-    if(::poll(fds, sizeof(fds) / sizeof(fds[0]), -1) > 0)
+    if(auto dev = udev_monitor_receive_device(monitor_))
     {
-        if(auto dev = udev_monitor_receive_device(monitor_))
+        std::string act = udev_device_get_action(dev);
+        pie::info info = from_device(&dev);
+        udev_device_unref(dev);
+
+        if(act == "add")
         {
-            std::string act = udev_device_get_action(dev);
-            pie::info info = from_device(&dev);
-            udev_device_unref(dev);
-
-            if(act == "add")
-            {
-                clog_(level::info) << "Device connect: " << info << std::endl;
-                device_added_(info);
-            }
-            else if(act == "remove")
-            {
-                clog_(level::info) << "Device disconnect: " << info << std::endl;
-                device_removed_(info);
-            }
+            clog_(level::info) << "Device connect: " << info << std::endl;
+            device_added_(info);
+        }
+        else if(act == "remove")
+        {
+            clog_(level::info) << "Device disconnect: " << info << std::endl;
+            device_removed_(info);
         }
     }
 

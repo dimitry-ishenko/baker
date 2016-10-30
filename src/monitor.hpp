@@ -44,6 +44,8 @@ private:
     udev* udev_ = nullptr;
     udev_monitor* monitor_ = nullptr;
 
+    asio::posix::stream_descriptor stream_;
+
     void enumerate();
 
     void schedule_poll();
