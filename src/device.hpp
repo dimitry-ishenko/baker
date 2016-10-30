@@ -26,11 +26,11 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-class XK_device : public signals, public closing
+class device : public signals, public closing
 {
 public:
     ////////////////////
-    virtual ~XK_device() { close(); }
+    virtual ~device() { close(); }
 
     void close() noexcept override;
 
@@ -48,7 +48,7 @@ public:
 
 protected:
     ////////////////////
-    XK_device(asio::io_service&, byte rows, std::string name, const std::string& path, log::book);
+    device(asio::io_service&, byte rows, std::string name, const std::string& path, log::book);
 
     ////////////////////
     std::string name_;
@@ -82,12 +82,12 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-class XK16_device : public XK_device
+class device_XK16 : public device
 {
 protected:
     ////////////////////
-    XK16_device(asio::io_service& io, byte rows, std::string name, const std::string& path, log::book clog) :
-        XK_device(io, rows, std::move(name), path, std::move(clog))
+    device_XK16(asio::io_service& io, byte rows, std::string name, const std::string& path, log::book clog) :
+        device(io, rows, std::move(name), path, std::move(clog))
     {
         rows_ = rows;
     }

@@ -19,7 +19,7 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-XK_device::XK_device(asio::io_service& io, byte, std::string name, const std::string& path, log::book clog) :
+device::device(asio::io_service& io, byte, std::string name, const std::string& path, log::book clog) :
     closing(io), name_(std::move(name)), clog_(std::move(clog)), timer_(io), func_(io, path)
 {
     name_ += " on " + path;
@@ -58,7 +58,7 @@ XK_device::XK_device(asio::io_service& io, byte, std::string name, const std::st
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK_device::close() noexcept
+void device::close() noexcept
 {
     if(func_.is_open())
     {
@@ -81,7 +81,7 @@ void XK_device::close() noexcept
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK_device::read()
+void device::read()
 {
     auto data = func_.read_data();
     if(data.size() - 2 < columns_) throw std::invalid_argument("Input short read");
@@ -173,17 +173,17 @@ void XK_device::read()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void XK_device::schedule_read()
+void device::schedule_read()
 {
     using namespace std::literals::chrono_literals;
 
     clog_(level::trace) << "Scheduling read" << std::endl;
     timer_.expires_from_now(0ms);
-    timer_.async_wait(std::bind(&XK_device::read, this));
+    timer_.async_wait(std::bind(&device::read, this));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-XK_device::press_release XK_device::process_read(const std::vector<byte>& data)
+device::press_release device::process_read(const std::vector<byte>& data)
 {
     buttons press, release;
 
@@ -233,9 +233,9 @@ static inline index_t mapped(index_t index)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-XK16_device::press_release XK16_device::process_read(const std::vector<byte>& data)
+device_XK16::press_release device_XK16::process_read(const std::vector<byte>& data)
 {
-    press_release from = XK_device::process_read(data), to;
+    press_release from = device::process_read(data), to;
 
     for(auto index : std::get<press>(from)) std::get<press>(to).insert(mapped(index));
     for(auto index : std::get<release>(from)) std::get<release>(to).insert(mapped(index));

@@ -19,7 +19,7 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-actions::actions(const std::string& conf, XK_device& device, log::book clog) :
+actions::actions(const std::string& conf, device& device, log::book clog) :
     clog_(clog)
 {
     clog_(level::info) << "Reading file " << conf << std::endl;

@@ -27,7 +27,7 @@ class actions
 {
 public:
     ////////////////////
-    actions(const std::string& conf, XK_device&, log::book);
+    actions(const std::string& conf, device&, log::book);
     ~actions();
 
 protected:
