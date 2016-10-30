@@ -9,9 +9,8 @@
 #include "errno_error.hpp"
 #include "functions.hpp"
 
-#include <array>
 #include <chrono>
-#include <cstring> // std::memcpy
+#include <cstddef> // std::size_t
 #include <stdexcept>
 #include <thread>
 
@@ -251,7 +250,8 @@ void functions::set_level(pie::light::color_t color, byte value)
 {
     level_[color] = value;
     pie::set_light_level data;
-    std::memcpy(data.level, level_, sizeof(level_));
+    using namespace std;
+    for(auto s = begin(level_), d = begin(data.level); s != end(level_); ++s, ++d) *d = *s;
     asio::write(stream_, asio::buffer(&data, sizeof(data)));
 }
 
