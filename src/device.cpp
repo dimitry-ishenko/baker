@@ -244,4 +244,19 @@ device_XK16::press_release device_XK16::process_read(const std::vector<byte>& da
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+device_jog::press_release device_jog::process_read(const std::vector<byte>& data)
+{
+    if(data.size() - 2 < off_) throw std::invalid_argument("Input short read (jog)");
+
+    auto dir = static_cast<dir_t>(data[off_]);
+    if(dir) jog_(dir);
+
+    auto speed = static_cast<speed_t>(data[off_ + 1]);
+    if(speed != speed_) shuttle_(speed_ = speed);
+
+    return device::process_read(data);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 }

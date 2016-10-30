@@ -95,6 +95,23 @@ protected:
     press_release process_read(const std::vector<byte>&) override;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+class device_jog : public device
+{
+protected:
+    ////////////////////
+    device_jog(asio::io_service& io, const pie::params& params, const pie::info& info, log::book clog) :
+        device(io, params, info, std::move(clog))
+    {
+        off_ = params.off_jog;
+    }
+
+    std::size_t off_;
+    speed_t speed_ = 0;
+
+    press_release process_read(const std::vector<byte>&) override;
+};
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
