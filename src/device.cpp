@@ -19,10 +19,10 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-device::device(asio::io_service& io, byte, std::string name, const std::string& path, log::book clog) :
-    closing(io), name_(std::move(name)), clog_(std::move(clog)), timer_(io), func_(io, path)
+device::device(asio::io_service& io, byte, const pie::info& info, log::book clog) :
+    closing(io), name_(info.product), clog_(std::move(clog)), timer_(io), func_(io, info.path)
 {
-    name_ += " on " + path;
+    name_ += " on " + info.path;
 
     auto desc = func_.read_desc();
 

@@ -37,7 +37,7 @@ private:
     std::string conf_;
     log::book clog_;
 
-    using create = std::function<int(asio::io_service&, const std::string& path, const log::book&)>;
+    using create = std::function<int(asio::io_service&, const info&, const log::book&)>;
     std::map<regi, create> regis_;
 
     template<typename> void regi_device();

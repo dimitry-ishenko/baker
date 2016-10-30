@@ -23,8 +23,8 @@ template<typename T>
 class XK : public traits<T>::base
 {
 public:
-    XK(asio::io_service& io, const std::string& path, log::book clog) :
-        traits<T>::base(io, traits<T>::rows, traits<T>::name, path, std::move(clog))
+    XK(asio::io_service& io, const pie::info& info, log::book clog) :
+        traits<T>::base(io, traits<T>::rows, info, std::move(clog))
     { }
 };
 
@@ -42,7 +42,6 @@ struct XKE_128 { };
 template<>
 struct traits<XK_4>
 {
-    static constexpr auto name = "XK-4";
     static constexpr regi regis[] = { { 0x05f3, 0x0467, 0 }, { 0x05f3, 0x0469, 0 } };
     static constexpr byte rows = 1;
     using base = device_XK16;
@@ -51,7 +50,6 @@ struct traits<XK_4>
 template<>
 struct traits<XK_8>
 {
-    static constexpr auto name = "XK-8";
     static constexpr regi regis[] = { { 0x05f3, 0x046a, 0 }, { 0x05f3, 0x046c, 0 } };
     static constexpr byte rows = 2;
     using base = device_XK16;
@@ -60,7 +58,6 @@ struct traits<XK_8>
 template<>
 struct traits<XK_16>
 {
-    static constexpr auto name = "XK-16";
     static constexpr regi regis[] = { { 0x05f3, 0x0419, 0 }, { 0x05f3, 0x041b, 0 } };
     static constexpr byte rows = 4;
     using base = device_XK16;
@@ -69,7 +66,6 @@ struct traits<XK_16>
 template<>
 struct traits<XK_24>
 {
-    static constexpr auto name = "XK-24";
     static constexpr regi regis[] = { { 0x05f3, 0x0403, 0 }, { 0x05f3, 0x0405, 0 } };
     static constexpr byte rows = 0; // ignored
     using base = device;
@@ -78,7 +74,6 @@ struct traits<XK_24>
 template<>
 struct traits<XKR_32>
 {
-    static constexpr auto name = "XKR-32";
     static constexpr regi regis[] = { { 0x05f3, 0x04ff, 0 }, { 0x05f3, 0x0502, 0 } };
     static constexpr byte rows = 0; // ignored
     using base = device;
@@ -87,7 +82,6 @@ struct traits<XKR_32>
 template<>
 struct traits<XK_60>
 {
-    static constexpr auto name = "XK-60";
     static constexpr regi regis[] = { { 0x05f3, 0x0461, 0 }, { 0x05f3, 0x0463, 0 } };
     static constexpr byte rows = 0; // ignored
     using base = device;
@@ -96,7 +90,6 @@ struct traits<XK_60>
 template<>
 struct traits<XK_80>
 {
-    static constexpr auto name = "XK-80";
     static constexpr regi regis[] = { { 0x05f3, 0x0441, 0 }, { 0x05f3, 0x0443, 0 } };
     static constexpr byte rows = 0; // ignored
     using base = device;
@@ -105,7 +98,6 @@ struct traits<XK_80>
 template<>
 struct traits<XKE_128>
 {
-    static constexpr auto name = "XKE-128";
     static constexpr regi regis[] = { { 0x05f3, 0x04cb, 0 }, { 0x05f3, 0x04ce, 0 } };
     static constexpr byte rows = 0; // ignored
     using base = device;
