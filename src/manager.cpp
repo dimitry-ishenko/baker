@@ -7,6 +7,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #include "actions.hpp"
+#include "closing.hpp"
 #include "manager.hpp"
 #include "proc/process.hpp"
 
@@ -33,17 +34,9 @@ void manager::regi_device()
             {
                 XK<T> device(io, path, clog);
                 pie::actions actions(conf_, device, clog);
-                io.run();
+
+                catch_interrupted(io.run());
                 return 0;
-            }
-            catch(asio::system_error& e)
-            {
-                if(e.code() != asio::error::interrupted)
-                {
-                    clog_(level::fatal) << "ERROR: " << e.what() << std::endl;
-                    return 1;
-                }
-                else return 0;
             }
             catch(std::exception& e)
             {

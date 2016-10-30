@@ -6,6 +6,7 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
+#include "closing.hpp"
 #include "log/book.hpp"
 #include "manager.hpp"
 #include "monitor.hpp"
@@ -84,7 +85,7 @@ int main(int argc, char* argv[])
         monitor.device_added().connect(std::bind(&pie::manager::add_device, &manager, std::placeholders::_1));
         monitor.device_removed().connect(std::bind(&pie::manager::remove_device, &manager, std::placeholders::_1));
 
-        io.run();
+        catch_interrupted(io.run());
 
         clog(level::info) << "Exiting baker" << std::endl;
         return 0;
