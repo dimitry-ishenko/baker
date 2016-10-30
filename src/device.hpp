@@ -69,6 +69,7 @@ protected:
     enum { press, release }; // indexes for press_release tuple
     using press_release = std::tuple<buttons, buttons>;
 
+    buttons ignore_;
     buttons critical_;
 
     static constexpr index_t none = static_cast<index_t>(-1);
@@ -80,7 +81,6 @@ protected:
     virtual press_release process_read(const std::vector<byte>&);
 };
 
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 class device_XK16 : public device
 {

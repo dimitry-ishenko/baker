@@ -19,8 +19,8 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-device::device(asio::io_service& io, const params&, const pie::info& info, log::book clog) :
-    closing(io), name_(info.product), clog_(std::move(clog)), timer_(io), func_(io, info.path)
+device::device(asio::io_service& io, const pie::params& params, const pie::info& info, log::book clog) :
+    closing(io), name_(info.product), clog_(std::move(clog)), timer_(io), func_(io, info.path), ignore_(params.ignore)
 {
     name_ += " on " + info.path;
 
@@ -210,10 +210,10 @@ device::press_release device::process_read(const std::vector<byte>& data)
 
         for(byte r = 0; r < rows_; ++r)
         {
-            if(on & 1) press.insert(index);
+            if(!ignore_.count(index) && (on & 1)) press.insert(index);
             on >>= 1;
 
-            if(off & 1) release.insert(index);
+            if(!ignore_.count(index) && (off & 1)) release.insert(index);
             off >>= 1;
 
             ++index;

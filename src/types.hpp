@@ -10,6 +10,7 @@
 #define PIE_TYPES_HPP
 
 #include <cstdint>
+#include <initializer_list>
 #include <iomanip>
 #include <ostream>
 #include <string>
@@ -58,6 +59,7 @@ struct info
 struct params
 {
     const byte rows = 0;
+    const std::initializer_list<index_t> ignore = {};
 };
 
 ////////////////////////////////////////////////////////////////////////////////
