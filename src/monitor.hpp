@@ -9,6 +9,7 @@
 #ifndef PIE_MONITOR_HPP
 #define PIE_MONITOR_HPP
 
+#include "closing.hpp"
 #include "info.hpp"
 #include "log/book.hpp"
 #include "sig/signal.hpp"
@@ -24,14 +25,14 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-class monitor
+class monitor : public closing
 {
 public:
     ////////////////////
     explicit monitor(asio::io_service& io, log::book);
-    ~monitor() noexcept { close(); }
+    virtual ~monitor() noexcept { close(); }
 
-    void close() noexcept;
+    void close() noexcept override;
 
     sig::signal_proxy<void(const info&)>& device_added() { return device_added_; }
     sig::signal_proxy<void(const info&)>& device_removed() { return device_removed_; }

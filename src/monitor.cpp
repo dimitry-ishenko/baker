@@ -20,7 +20,7 @@ namespace pie
 
 ////////////////////////////////////////////////////////////////////////////////
 monitor::monitor(asio::io_service& io, log::book clog) try :
-    timer_(io), clog_(std::move(clog)), stream_(io)
+    closing(io), timer_(io), clog_(std::move(clog)), stream_(io)
 {
     clog_(level::info) << "Connecting to udev" << std::endl;
     udev_ = udev_new();
