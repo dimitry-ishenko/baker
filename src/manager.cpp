@@ -22,14 +22,15 @@ namespace pie
 manager::manager(asio::io_service& io, std::string conf, log::book clog) :
     io_(io), conf_(std::move(conf)), clog_(std::move(clog))
 {
-    regi_device< XK_4  >();
-    regi_device< XK_8  >();
-    regi_device< XK_16 >();
-    regi_device< XK_24 >();
-    regi_device<XKR_32 >();
-    regi_device< XK_60 >();
-    regi_device< XK_80 >();
-    regi_device<XKE_128>();
+    regi_device< XK_4   >();
+    regi_device< XK_8   >();
+    regi_device< XK_16  >();
+    regi_device< XK_24  >();
+    regi_device<XKR_32  >();
+    regi_device< XK_60  >();
+    regi_device< XK_68JS>();
+    regi_device< XK_80  >();
+    regi_device<XKE_128 >();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

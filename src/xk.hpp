@@ -32,14 +32,15 @@ public:
 
 ////////////////////////////////////////////////////////////////////////////////
 // device tags
-struct  XK_4   { };
-struct  XK_8   { };
-struct  XK_16  { };
-struct  XK_24  { };
-struct XKR_32  { };
-struct  XK_60  { };
-struct  XK_80  { };
-struct XKE_128 { };
+struct  XK_4    { };
+struct  XK_8    { };
+struct  XK_16   { };
+struct  XK_24   { };
+struct XKR_32   { };
+struct  XK_60   { };
+struct  XK_68JS { };
+struct  XK_80   { };
+struct XKE_128  { };
 
 template<>
 struct traits<XK_4>
@@ -111,6 +112,27 @@ struct traits<XK_60>
         { 0x05f3, 0x0463, 0 },
     };
     using base = device;
+};
+
+template<>
+struct traits<XK_68JS>
+{
+    static constexpr pie::params params =
+    {
+        0, 16,
+        {
+            29, 30, 31,
+            37, 38, 39,
+            45, 46, 47,
+            53, 54, 55,
+        }
+    };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x045a, 0 },
+        { 0x05f3, 0x045c, 0 },
+    };
+    using base = device_jog;
 };
 
 template<>

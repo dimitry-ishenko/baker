@@ -30,6 +30,9 @@ constexpr std::initializer_list<regi> traits<XKR_32>::regis;
 constexpr pie::params traits<XK_60>::params;
 constexpr std::initializer_list<regi> traits<XK_60>::regis;
 
+constexpr pie::params traits<XK_68JS>::params;
+constexpr std::initializer_list<regi> traits<XK_68JS>::regis;
+
 constexpr pie::params traits<XK_80>::params;
 constexpr std::initializer_list<regi> traits<XK_80>::regis;
 
