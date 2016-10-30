@@ -37,10 +37,12 @@ protected:
     enum { critical, command }; // indexes for action tuple
     using action = std::tuple<bool, std::string>;
 
-    std::map<index_t, action> map_;
+    std::map<index_t, action> index_map_;
+
+    void pressed(index_t);
 
     proc::process proc_;
-    void pressed(index_t);
+    void execute(const std::string&);
 };
 
 }

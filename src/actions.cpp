@@ -66,12 +66,12 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
             if(critical) name += '*';
             clog_(level::debug) << "Found action: " << name << "\t= " << actions[n] << std::endl;
 
-            map_.emplace(index, std::make_tuple(critical, std::move(actions[n])));
+            index_map_.emplace(index, std::make_tuple(critical, std::move(actions[n])));
         }
-    clog_(level::info) << "Found " << map_.size() << " actions for device " << device.name() << std::endl;
+    clog_(level::info) << "Found " << index_map_.size() << " actions for device " << device.name() << std::endl;
 
     ////////////////////
-    for(const auto& pair : map_)
+    for(const auto& pair : index_map_)
         if(std::get<critical>(pair.second)) device.critical(pair.first);
 
     if(freq != invalid) device.set_freq(static_cast<byte>(freq));
@@ -91,15 +91,18 @@ actions::~actions()
 ////////////////////////////////////////////////////////////////////////////////
 void actions::pressed(index_t index)
 {
-    auto ri = map_.find(index);
-    if(ri != map_.end())
+    auto ri = index_map_.find(index);
+    if(ri != index_map_.end()) execute(std::get<command>(ri->second));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void actions::execute(const std::string& c)
+{
+    proc_.get_status();
+    proc_ = proc::process([c]()
     {
-        proc_.get_status();
-        proc_ = proc::process([c = std::get<command>(ri->second)]()
-        {
-            return proc::this_process::replace("/bin/sh", "-c", std::move(c));
-        });
-    }
+        return proc::this_process::replace("/bin/sh", "-c", std::move(c));
+    });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
