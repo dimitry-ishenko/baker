@@ -59,6 +59,7 @@ struct info
 struct params
 {
     const byte rows = 0;
+    std::size_t off_jog = 0; // offset of jog & shuttle bytes
     const std::initializer_list<index_t> ignore = {};
 };
 
