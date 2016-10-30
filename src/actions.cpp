@@ -18,6 +18,11 @@ using log::level;
 namespace pie
 {
 
+static inline byte stob(const std::string& value)
+{
+    return static_cast<byte>(std::stoi(value));
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 actions::actions(const std::string& conf, device& device, log::book clog) :
     clog_(clog)
@@ -26,21 +31,30 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
     std::fstream fs(conf, std::ios_base::in);
     if(!fs.is_open()) throw std::fstream::failure("Failed to open file");
 
-    ////////////////////
-    std::vector<std::string> actions(device.total() * 2);
-
-    // NB: can't use byte (aka uint8_t) here,
-    // as it's treated as unsigned char
-    word freq = invalid;
-    word red  = invalid;
-    word blue = invalid;
-
-    auto section = std::to_string(static_cast<int>(device.uid())) + '-';
+    auto section = std::to_string(device.uid()) + '-';
     std::vector<pgm::arg> args;
 
-    args.emplace_back(section + "freq", freq, "");
-    args.emplace_back(section + "red" , red , "");
-    args.emplace_back(section + "blue", blue, "");
+    ////////////////////
+    args.emplace_back(section + "freq", [&device](std::string s)
+    {
+        device.set_freq(stob(s));
+        return true;
+    }, "");
+
+    args.emplace_back(section + "red" , [&device](std::string s)
+    {
+        device.set_level(light::red, stob(s));
+        return true;
+    }, "");
+
+    args.emplace_back(section + "blue", [&device](std::string s)
+    {
+        device.set_level(light::blue, stob(s));
+        return true;
+    }, "");
+
+    ////////////////////
+    std::vector<std::string> actions(device.total() * 2);
 
     // create args in the form <uid>-<index>{*}
     for(std::size_t n = 0; n < actions.size(); ++n)
@@ -73,10 +87,6 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
     ////////////////////
     for(const auto& pair : index_map_)
         if(std::get<critical>(pair.second)) device.critical(pair.first);
-
-    if(freq != invalid) device.set_freq(static_cast<byte>(freq));
-    if(red  != invalid) device.set_level(light::red, static_cast<byte>(red));
-    if(blue != invalid) device.set_level(light::blue, static_cast<byte>(blue));
 
     device.pressed().connect(std::bind(&actions::pressed, this, std::placeholders::_1));
 }
