@@ -34,6 +34,7 @@ public:
 // device tags
 struct  XK_4    { };
 struct  XK_8    { };
+struct  XK_12JS { };
 struct  XK_16   { };
 struct  XK_24   { };
 struct XKR_32   { };
@@ -64,6 +65,27 @@ struct traits<XK_8>
         { 0x05f3, 0x046c, 0 },
     };
     using base = device_XK16;
+};
+
+template<>
+struct traits<XK_12JS>
+{
+    static constexpr pie::params params =
+    {
+        0, 6,
+        {
+             3,  4,  5,  6,  7,
+            11, 12, 13, 14, 15,
+            19, 20, 21, 22, 23,
+            27, 28, 29, 30, 21,
+        }
+    };
+    static constexpr std::initializer_list<regi> regis =
+    {
+        { 0x05f3, 0x0426, 0 },
+        { 0x05f3, 0x0428, 0 },
+    };
+    using base = device_jog;
 };
 
 template<>

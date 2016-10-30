@@ -24,6 +24,7 @@ manager::manager(asio::io_service& io, std::string conf, log::book clog) :
 {
     regi_device< XK_4   >();
     regi_device< XK_8   >();
+    regi_device< XK_12JS>();
     regi_device< XK_16  >();
     regi_device< XK_24  >();
     regi_device<XKR_32  >();
