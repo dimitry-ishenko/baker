@@ -16,7 +16,6 @@
 
 #include <map>
 #include <string>
-#include <tuple>
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
@@ -34,10 +33,7 @@ protected:
     ////////////////////
     log::book clog_;
 
-    enum { critical, command }; // indexes for action tuple
-    using action = std::tuple<bool, std::string>;
-
-    std::map<index_t, action> index_map_;
+    std::map<index_t, std::string> index_map_;
 
     void pressed(index_t);
 

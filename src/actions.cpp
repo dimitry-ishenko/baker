@@ -31,63 +31,52 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
     std::fstream fs(conf, std::ios_base::in);
     if(!fs.is_open()) throw std::fstream::failure("Failed to open file");
 
-    auto section = std::to_string(device.uid()) + '-';
+    auto sec = std::to_string(device.uid()) + '-';
     std::vector<pgm::arg> args;
 
     ////////////////////
-    args.emplace_back(section + "freq", [&device](std::string s)
+    args.emplace_back(sec + "freq", [&device](std::string s)
     {
         device.set_freq(stob(s));
         return true;
     }, "");
 
-    args.emplace_back(section + "red" , [&device](std::string s)
+    args.emplace_back(sec + "red" , [&device](std::string s)
     {
         device.set_level(light::red, stob(s));
         return true;
     }, "");
 
-    args.emplace_back(section + "blue", [&device](std::string s)
+    args.emplace_back(sec + "blue", [&device](std::string s)
     {
         device.set_level(light::blue, stob(s));
         return true;
     }, "");
 
     ////////////////////
-    std::vector<std::string> actions(device.total() * 2);
-
-    // create args in the form <uid>-<index>{*}
-    for(std::size_t n = 0; n < actions.size(); ++n)
+    for(byte index = 0; index < device.total(); ++index)
     {
-        auto index = n / 2;
-        bool critical = n & 1;
+        auto name = sec + std::to_string(index);
+        args.emplace_back(name, [this, index](std::string s)
+        {
+            index_map_.emplace(index, std::move(s));
+            return true;
+        }, "");
 
-        auto name = section + std::to_string(index);
-        if(critical) name += '*';
-
-        args.emplace_back(name, actions[n], "");
+        name += '*';
+        args.emplace_back(name, [this, index, &device](std::string s)
+        {
+            index_map_.emplace(index, std::move(s));
+            device.critical(index);
+            return true;
+        }, "");
     }
 
     pgm::parse(fs, args, pgm::policy::duplicate::accept, pgm::policy::extra::ignore);
 
-    for(std::size_t n = 0; n < actions.size(); ++n)
-        if(actions[n].size())
-        {
-            auto index = n / 2;
-            bool critical = n & 1;
-
-            auto name = section + std::to_string(index);
-            if(critical) name += '*';
-            clog_(level::debug) << "Found action: " << name << "\t= " << actions[n] << std::endl;
-
-            index_map_.emplace(index, std::make_tuple(critical, std::move(actions[n])));
-        }
     clog_(level::info) << "Found " << index_map_.size() << " actions for device " << device.name() << std::endl;
 
     ////////////////////
-    for(const auto& pair : index_map_)
-        if(std::get<critical>(pair.second)) device.critical(pair.first);
-
     device.pressed().connect(std::bind(&actions::pressed, this, std::placeholders::_1));
 }
 
@@ -102,7 +91,7 @@ actions::~actions()
 void actions::pressed(index_t index)
 {
     auto ri = index_map_.find(index);
-    if(ri != index_map_.end()) execute(std::get<command>(ri->second));
+    if(ri != index_map_.end()) execute(ri->second);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
