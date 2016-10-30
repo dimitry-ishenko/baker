@@ -26,12 +26,18 @@ public:
 
     sig::signal_proxy<void(bool)>& locked() { return locked_; }
 
+    sig::signal_proxy<void(dir_t)>& jog() { return jog_; }
+    sig::signal_proxy<void(speed_t)>& shuttle() { return shuttle_; }
+
 protected:
     ////////////////////
     sig::signal<void(index_t)> pressed_;
     sig::signal<void(index_t)> released_;
 
     sig::signal<void(bool)> locked_;
+
+    sig::signal<void(speed_t)> shuttle_;
+    sig::signal<void(dir_t)> jog_;
 };
 
 }

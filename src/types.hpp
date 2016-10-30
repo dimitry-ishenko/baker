@@ -26,6 +26,9 @@ using word = uint16_t;
 using index_t = byte;
 static constexpr index_t prog = static_cast<index_t>(-1);
 
+enum dir_t : int8_t { ccw = -1, cw = 1 };
+using speed_t = int8_t;
+
 ////////////////////////////////////////////////////////////////////////////////
 using vid = word;
 using pid = word;
