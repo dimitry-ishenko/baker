@@ -10,7 +10,7 @@
 #define PIE_XK_HPP
 
 #include "device.hpp"
-#include "info.hpp"
+#include "types.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////
 namespace pie
