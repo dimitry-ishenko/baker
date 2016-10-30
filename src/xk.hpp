@@ -24,7 +24,7 @@ class XK : public traits<T>::base
 {
 public:
     XK(asio::io_service& io, const pie::info& info, log::book clog) :
-        traits<T>::base(io, traits<T>::rows, info, std::move(clog))
+        traits<T>::base(io, traits<T>::params, info, std::move(clog))
     { }
 };
 
@@ -42,64 +42,64 @@ struct XKE_128 { };
 template<>
 struct traits<XK_4>
 {
+    static constexpr pie::params params = { 1 };
     static constexpr regi regis[] = { { 0x05f3, 0x0467, 0 }, { 0x05f3, 0x0469, 0 } };
-    static constexpr byte rows = 1;
     using base = device_XK16;
 };
 
 template<>
 struct traits<XK_8>
 {
+    static constexpr pie::params params = { 2 };
     static constexpr regi regis[] = { { 0x05f3, 0x046a, 0 }, { 0x05f3, 0x046c, 0 } };
-    static constexpr byte rows = 2;
     using base = device_XK16;
 };
 
 template<>
 struct traits<XK_16>
 {
+    static constexpr pie::params params = { 4 };
     static constexpr regi regis[] = { { 0x05f3, 0x0419, 0 }, { 0x05f3, 0x041b, 0 } };
-    static constexpr byte rows = 4;
     using base = device_XK16;
 };
 
 template<>
 struct traits<XK_24>
 {
+    static constexpr pie::params params = {};
     static constexpr regi regis[] = { { 0x05f3, 0x0403, 0 }, { 0x05f3, 0x0405, 0 } };
-    static constexpr byte rows = 0; // ignored
     using base = device;
 };
 
 template<>
 struct traits<XKR_32>
 {
+    static constexpr pie::params params = {};
     static constexpr regi regis[] = { { 0x05f3, 0x04ff, 0 }, { 0x05f3, 0x0502, 0 } };
-    static constexpr byte rows = 0; // ignored
     using base = device;
 };
 
 template<>
 struct traits<XK_60>
 {
+    static constexpr pie::params params = {};
     static constexpr regi regis[] = { { 0x05f3, 0x0461, 0 }, { 0x05f3, 0x0463, 0 } };
-    static constexpr byte rows = 0; // ignored
     using base = device;
 };
 
 template<>
 struct traits<XK_80>
 {
+    static constexpr pie::params params = {};
     static constexpr regi regis[] = { { 0x05f3, 0x0441, 0 }, { 0x05f3, 0x0443, 0 } };
-    static constexpr byte rows = 0; // ignored
     using base = device;
 };
 
 template<>
 struct traits<XKE_128>
 {
+    static constexpr pie::params params = {};
     static constexpr regi regis[] = { { 0x05f3, 0x04cb, 0 }, { 0x05f3, 0x04ce, 0 } };
-    static constexpr byte rows = 0; // ignored
     using base = device;
 };
 

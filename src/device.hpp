@@ -48,7 +48,7 @@ public:
 
 protected:
     ////////////////////
-    device(asio::io_service&, byte rows, const info&, log::book);
+    device(asio::io_service&, const params&, const info&, log::book);
 
     ////////////////////
     std::string name_;
@@ -86,10 +86,10 @@ class device_XK16 : public device
 {
 protected:
     ////////////////////
-    device_XK16(asio::io_service& io, byte rows, const pie::info& info, log::book clog) :
-        device(io, rows, info, std::move(clog))
+    device_XK16(asio::io_service& io, const pie::params& params, const pie::info& info, log::book clog) :
+        device(io, params, info, std::move(clog))
     {
-        rows_ = rows;
+        rows_ = params.rows;
     }
 
     press_release process_read(const std::vector<byte>&) override;
