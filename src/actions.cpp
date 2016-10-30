@@ -59,25 +59,48 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
         auto name = sec + std::to_string(index);
         args.emplace_back(name, [this, index](std::string s)
         {
-            index_map_.emplace(index, std::move(s));
+            indexes_.emplace(index, std::move(s));
             return true;
         }, "");
 
         name += '*';
         args.emplace_back(name, [this, index, &device](std::string s)
         {
-            index_map_.emplace(index, std::move(s));
+            indexes_.emplace(index, std::move(s));
             device.critical(index);
             return true;
         }, "");
     }
 
-    pgm::parse(fs, args, pgm::policy::duplicate::accept, pgm::policy::extra::ignore);
+    ////////////////////
+    args.emplace_back(sec + "ccw", [this](std::string s)
+    {
+        dirs_.emplace(ccw, std::move(s));
+        return true;
+    }, "");
 
-    clog_(level::info) << "Found " << index_map_.size() << " actions for device " << device.name() << std::endl;
+    args.emplace_back(sec + "cw", [this](std::string s)
+    {
+        dirs_.emplace(cw, std::move(s));
+        return true;
+    }, "");
+
+    for(auto speed = speed_min; speed <= speed_max; ++speed)
+    {
+        args.emplace_back(sec + '@' + std::to_string(speed), [this, speed](std::string s)
+        {
+            speeds_.emplace(speed, std::move(s));
+            return true;
+        }, "");
+    }
 
     ////////////////////
+    pgm::parse(fs, args, pgm::policy::duplicate::accept, pgm::policy::extra::ignore);
+    clog_(level::info) << "Found " << indexes_.size() + dirs_.size() + speeds_.size() << " actions for device " << device.name() << std::endl;
+
     device.pressed().connect(std::bind(&actions::pressed, this, std::placeholders::_1));
+    device.jog().connect(std::bind(&actions::jog, this, std::placeholders::_1));
+    device.shuttle().connect(std::bind(&actions::shuttle, this, std::placeholders::_1));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,8 +113,22 @@ actions::~actions()
 ////////////////////////////////////////////////////////////////////////////////
 void actions::pressed(index_t index)
 {
-    auto ri = index_map_.find(index);
-    if(ri != index_map_.end()) execute(ri->second);
+    auto ri = indexes_.find(index);
+    if(ri != indexes_.end()) execute(ri->second);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void actions::jog(dir_t dir)
+{
+    auto ri = dirs_.find(dir);
+    if(ri != dirs_.end()) execute(ri->second);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void actions::shuttle(speed_t speed)
+{
+    auto ri = speeds_.find(speed);
+    if(ri != speeds_.end()) execute(ri->second);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

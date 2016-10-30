@@ -33,9 +33,13 @@ protected:
     ////////////////////
     log::book clog_;
 
-    std::map<index_t, std::string> index_map_;
+    std::map<index_t, std::string> indexes_;
+    std::map<dir_t, std::string> dirs_;
+    std::map<speed_t, std::string> speeds_;
 
     void pressed(index_t);
+    void jog(dir_t);
+    void shuttle(speed_t);
 
     proc::process proc_;
     void execute(const std::string&);
