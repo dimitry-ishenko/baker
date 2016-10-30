@@ -10,7 +10,6 @@
 #include "pgm/args.hpp"
 
 #include <fstream>
-#include <stdexcept>
 #include <vector>
 
 using log::level;
@@ -25,15 +24,16 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
 {
     clog_(level::info) << "Reading file " << conf << std::endl;
     std::fstream fs(conf, std::ios_base::in);
-    if(!fs.is_open()) throw std::runtime_error("Failed to open file");
+    if(!fs.is_open()) throw std::fstream::failure("Failed to open file");
 
     ////////////////////
     std::vector<std::string> actions(device.total() * 2);
 
-    static constexpr int none = -1;
-    int freq = none;
-    int red  = none;
-    int blue = none;
+    // NB: can't use byte (aka uint8_t) here,
+    // as it's treated as unsigned char
+    word freq = invalid;
+    word red  = invalid;
+    word blue = invalid;
 
     auto section = std::to_string(static_cast<int>(device.uid()));
     std::vector<pgm::arg> args;
@@ -74,9 +74,9 @@ actions::actions(const std::string& conf, XK_device& device, log::book clog) :
     for(const auto& pair : map_)
         if(std::get<critical>(pair.second)) device.critical(pair.first);
 
-    if(freq != none) device.set_freq(static_cast<byte>(freq));
-    if(red  != none) device.set_level(light::red, static_cast<byte>(red));
-    if(blue != none) device.set_level(light::blue, static_cast<byte>(blue));
+    if(freq != invalid) device.set_freq(static_cast<byte>(freq));
+    if(red  != invalid) device.set_level(light::red, static_cast<byte>(red));
+    if(blue != invalid) device.set_level(light::blue, static_cast<byte>(blue));
 
     device.pressed().connect(std::bind(&actions::pressed, this, std::placeholders::_1));
 }
@@ -101,8 +101,6 @@ void actions::pressed(index_t index)
         });
     }
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 }

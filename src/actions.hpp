@@ -12,6 +12,7 @@
 #include "device.hpp"
 #include "log/book.hpp"
 #include "proc/process.hpp"
+#include "types.hpp"
 
 #include <map>
 #include <string>
