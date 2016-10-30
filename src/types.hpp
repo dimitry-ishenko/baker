@@ -28,7 +28,10 @@ using index_t = byte;
 static constexpr index_t prog = static_cast<index_t>(-1);
 
 enum dir_t : int8_t { ccw = -1, cw = 1 };
+
 using speed_t = int8_t;
+static constexpr speed_t speed_min = -7;
+static constexpr speed_t speed_max = 7;
 
 ////////////////////////////////////////////////////////////////////////////////
 using vid = word;
