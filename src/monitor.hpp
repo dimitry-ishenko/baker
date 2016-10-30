@@ -10,13 +10,12 @@
 #define PIE_MONITOR_HPP
 
 #include "closing.hpp"
-#include "info.hpp"
 #include "log/book.hpp"
 #include "sig/signal.hpp"
+#include "types.hpp"
 
 #include <asio.hpp>
 #include <asio/system_timer.hpp>
-#include <chrono>
 
 #include <libudev.h>
 
@@ -55,7 +54,7 @@ private:
     sig::signal<void(const info&)> device_added_;
     sig::signal<void(const info&)> device_removed_;
 
-    info from_device(udev_device**);
+    info from_device(udev_device*&);
 };
 
 }

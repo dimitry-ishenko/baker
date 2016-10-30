@@ -73,27 +73,27 @@ void monitor::close() noexcept
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-info monitor::from_device(udev_device** dev)
+info monitor::from_device(udev_device*& dev)
 {
     pie::info info;
 
-    info.path = udev_device_get_devnode(*dev);
+    info.path = udev_device_get_devnode(dev);
 
-    *dev = udev_device_get_parent_with_subsystem_devtype(*dev, "usb", "usb_interface");
+    dev = udev_device_get_parent_with_subsystem_devtype(dev, "usb", "usb_interface");
 
-    auto iface = udev_device_get_sysattr_value(*dev, "bInterfaceNumber");
-    info.regi.iface = iface ? std::stoi(iface) : invalid;
+    if(auto iface = udev_device_get_sysattr_value(dev, "bInterfaceNumber"))
+        info.regi.iface = static_cast<word>(std::stoi(iface));
 
-    *dev = udev_device_get_parent_with_subsystem_devtype(*dev, "usb", "usb_device");
+    dev = udev_device_get_parent_with_subsystem_devtype(dev, "usb", "usb_device");
 
-    auto vid = udev_device_get_sysattr_value(*dev, "idVendor");
-    info.regi.vid = vid ? std::stoi("0x" + std::string(vid), 0, 0) : invalid;
+    if(auto vid = udev_device_get_sysattr_value(dev, "idVendor"))
+        info.regi.vid = static_cast<word>(std::stoi("0x" + std::string(vid), 0, 0));
 
-    auto pid = udev_device_get_sysattr_value(*dev, "idProduct");
-    info.regi.pid = pid ? std::stoi("0x" + std::string(pid), 0, 0) : invalid;
+    if(auto pid = udev_device_get_sysattr_value(dev, "idProduct"))
+        info.regi.pid = static_cast<word>(std::stoi("0x" + std::string(pid), 0, 0));
 
-    auto product = udev_device_get_sysattr_value(*dev, "product");
-    if(product) info.product = product;
+    if(auto product = udev_device_get_sysattr_value(dev, "product"))
+        info.product = product;
 
     return info;
 }
@@ -118,7 +118,7 @@ void monitor::enumerate()
     {
         if(auto dev = udev_device_new_from_syspath(udev_, udev_list_entry_get_name(entry)))
         {
-            pie::info info = from_device(&dev);
+            pie::info info = from_device(dev);
             udev_device_unref(dev);
 
             clog_(level::info) << "Found device: " << info << std::endl;
@@ -151,7 +151,7 @@ void monitor::poll()
     if(auto dev = udev_monitor_receive_device(monitor_))
     {
         std::string act = udev_device_get_action(dev);
-        pie::info info = from_device(&dev);
+        pie::info info = from_device(dev);
         udev_device_unref(dev);
 
         if(act == "add")
