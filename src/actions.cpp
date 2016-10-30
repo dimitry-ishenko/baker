@@ -35,7 +35,7 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
     word red  = invalid;
     word blue = invalid;
 
-    auto section = std::to_string(static_cast<int>(device.uid()));
+    auto section = std::to_string(static_cast<int>(device.uid())) + '-';
     std::vector<pgm::arg> args;
 
     args.emplace_back(section + "freq", freq, "");
@@ -48,7 +48,7 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
         auto index = n / 2;
         bool critical = n & 1;
 
-        auto name = section + '-' + std::to_string(index);
+        auto name = section + std::to_string(index);
         if(critical) name += '*';
 
         args.emplace_back(name, actions[n], "");
@@ -62,7 +62,7 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
             auto index = n / 2;
             bool critical = n & 1;
 
-            auto name = section + ':' + std::to_string(index);
+            auto name = section + std::to_string(index);
             if(critical) name += '*';
             clog_(level::debug) << "Found action: " << name << "\t= " << actions[n] << std::endl;
 
