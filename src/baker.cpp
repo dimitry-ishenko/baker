@@ -6,7 +6,7 @@
 // Contact: dimitry (dot) ishenko (at) (gee) mail (dot) com
 
 ////////////////////////////////////////////////////////////////////////////////
-#include "closing.hpp"
+#include "closing.hpp" // catch_interrupted
 #include "log/book.hpp"
 #include "manager.hpp"
 #include "monitor.hpp"
@@ -23,6 +23,11 @@ app::version version = { 2, 0, 0 };
 ////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
 {
+    std::string name = argv[0];
+    auto pos = name.find_last_of('/');
+    if(pos != std::string::npos) name.erase(0, pos + 1);
+
+    ////////////////////
     using log::level;
 
     log::book clog;
@@ -57,7 +62,7 @@ int main(int argc, char* argv[])
         }
         if(pgm::count(args, "version"))
         {
-            std::cout << "baker version " << version << std::endl;
+            std::cout << name << " version " << version << std::endl;
             return 0;
         }
 
@@ -75,7 +80,7 @@ int main(int argc, char* argv[])
         if(quiet) clog.clear();
 
         ////////////////////
-        clog(level::info) << "Starting baker" << std::endl;
+        clog(level::info) << "Starting " << name << std::endl;
         {
             asio::io_service io;
 
@@ -87,7 +92,7 @@ int main(int argc, char* argv[])
 
             catch_interrupted(io.run());
         }
-        clog(level::info) << "Exiting baker" << std::endl;
+        clog(level::info) << "Exiting " << name << std::endl;
 
         return 0;
     }
