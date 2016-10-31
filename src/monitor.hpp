@@ -28,7 +28,7 @@ class monitor : public closing
 {
 public:
     ////////////////////
-    explicit monitor(asio::io_service& io, log::book);
+    monitor(asio::io_service& io, log::book);
     virtual ~monitor() noexcept { close(); }
 
     void close() noexcept override;

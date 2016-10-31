@@ -26,7 +26,7 @@ class manager
 {
 public:
     ////////////////////
-    explicit manager(asio::io_service&, std::string conf, log::book);
+    manager(asio::io_service&, std::string conf, log::book);
 
     void add_device(const info&);
     void remove_device(const info&);
