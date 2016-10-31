@@ -22,14 +22,11 @@ public:
     ////////////////////
     virtual ~closing() noexcept;
 
-    virtual void close() noexcept = 0;
+    virtual void close() noexcept;
 
 protected:
     ////////////////////
-    explicit closing(asio::io_service& io) : sigset_(io, SIGINT, SIGTERM)
-    {
-        sigset_.async_wait([this](const asio::error_code&, int) { close(); });
-    }
+    explicit closing(asio::io_service& io);
 
 private:
     asio::signal_set sigset_;
