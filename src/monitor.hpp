@@ -24,11 +24,15 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
+enum enum_only_t { enum_only };
+
+////////////////////////////////////////////////////////////////////////////////
 class monitor : public closing
 {
 public:
     ////////////////////
-    monitor(asio::io_service& io, log::book);
+    monitor(asio::io_service& io, log::book clog, enum_only_t) : monitor(io, std::move(clog), false) { }
+    monitor(asio::io_service& io, log::book clog) : monitor(io, std::move(clog), true) { }
     virtual ~monitor() noexcept { close(); }
 
     void close() noexcept override;
@@ -38,8 +42,11 @@ public:
 
 private:
     ////////////////////
+    monitor(asio::io_service& io, log::book, bool poll);
+
     asio::system_timer timer_;
     log::book clog_;
+    bool poll_;
 
     udev* udev_ = nullptr;
     udev_monitor* monitor_ = nullptr;

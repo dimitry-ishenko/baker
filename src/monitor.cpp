@@ -19,8 +19,8 @@ namespace pie
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-monitor::monitor(asio::io_service& io, log::book clog) try :
-    closing(io), timer_(io), clog_(std::move(clog)), stream_(io)
+monitor::monitor(asio::io_service& io, log::book clog, bool poll) try :
+    closing(io), timer_(io), clog_(std::move(clog)), poll_(poll), stream_(io)
 {
     clog_(level::info) << "Connecting to udev" << std::endl;
     udev_ = udev_new();
@@ -131,8 +131,12 @@ void monitor::enumerate()
     clog_(level::debug) << "Disconnecting from udev enumerate" << std::endl;
     udev_enumerate_unref(enu);
 
-    clog_(level::info) <<  "Polling for changes" << std::endl;
-    schedule_poll();
+    if(poll_)
+    {
+        clog_(level::info) <<  "Polling for changes" << std::endl;
+        schedule_poll();
+    }
+    else close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
