@@ -62,7 +62,7 @@ void device::close() noexcept
 {
     if(func_.is_open())
     {
-        clog_(level::info) << name_ << ": closing" << std::endl;
+        clog_(level::info) << "Closing " << name_ << std::endl;
 
         clog_(level::debug) << "Cancelling read" << std::endl;
         asio::error_code ec;
