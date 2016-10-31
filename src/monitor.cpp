@@ -70,6 +70,8 @@ void monitor::close() noexcept
         udev_unref(udev_);
         udev_ = nullptr;
     }
+
+    closing::close();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
