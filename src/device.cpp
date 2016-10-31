@@ -250,14 +250,14 @@ device_jog::press_release device_jog::process_read(const std::vector<byte>& data
     if(data.size() - 2 < off_) throw std::invalid_argument("Input short read (jog)");
 
     auto dir = static_cast<dir_t>(data[off_]);
-    if(dir)
+    if(!lock_ && dir)
     {
         jog_(dir);
         clog_(level::debug) << "Jog " << (dir == ccw ? "CCW" : "CW") << std::endl;
     }
 
     auto speed = static_cast<speed_t>(data[off_ + 1]);
-    if(speed != speed_)
+    if(!lock_ && speed != speed_)
     {
         shuttle_(speed_ = speed);
         clog_(level::debug) << "Shuttle " << static_cast<int>(speed_) << std::endl;
