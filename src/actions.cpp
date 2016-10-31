@@ -35,20 +35,23 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
     std::vector<pgm::arg> args;
 
     ////////////////////
-    args.emplace_back(sec + "freq", [&device](std::string s)
+    args.emplace_back(sec + "freq", [this, &device](std::string s)
     {
+        clog_(level::debug) << "Setting freq to " << s << std::endl;
         device.set_freq(stob(s));
         return true;
     }, "");
 
-    args.emplace_back(sec + "red" , [&device](std::string s)
+    args.emplace_back(sec + "red" , [this, &device](std::string s)
     {
+        clog_(level::debug) << "Setting red level to " << s << std::endl;
         device.set_level(light::red, stob(s));
         return true;
     }, "");
 
-    args.emplace_back(sec + "blue", [&device](std::string s)
+    args.emplace_back(sec + "blue", [this, &device](std::string s)
     {
+        clog_(level::debug) << "Setting blue level to " << s << std::endl;
         device.set_level(light::blue, stob(s));
         return true;
     }, "");
@@ -59,6 +62,7 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
         auto name = sec + std::to_string(index);
         args.emplace_back(name, [this, index](std::string s)
         {
+            clog_(level::debug) << "Adding action: " << int(index) << " = " << s << std::endl;
             indexes_.emplace(index, std::move(s));
             return true;
         }, "");
@@ -66,6 +70,7 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
         name += '*';
         args.emplace_back(name, [this, index, &device](std::string s)
         {
+            clog_(level::debug) << "Adding action: " << int(index) << "* = " << s << std::endl;
             indexes_.emplace(index, std::move(s));
             device.critical(index);
             return true;
@@ -75,12 +80,14 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
     ////////////////////
     args.emplace_back(sec + "ccw", [this](std::string s)
     {
+        clog_(level::debug) << "Adding action: ccw = " << s << std::endl;
         dirs_.emplace(ccw, std::move(s));
         return true;
     }, "");
 
     args.emplace_back(sec + "cw", [this](std::string s)
     {
+        clog_(level::debug) << "Adding action: cw = " << s << std::endl;
         dirs_.emplace(cw, std::move(s));
         return true;
     }, "");
@@ -89,6 +96,7 @@ actions::actions(const std::string& conf, device& device, log::book clog) :
     {
         args.emplace_back(sec + '@' + std::to_string(speed), [this, speed](std::string s)
         {
+            clog_(level::debug) << "Adding action: @" << int(speed) << " = " << s << std::endl;
             speeds_.emplace(speed, std::move(s));
             return true;
         }, "");
