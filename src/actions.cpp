@@ -143,6 +143,7 @@ void actions::shuttle(speed_t speed)
 void actions::execute(const std::string& c)
 {
     proc_.get_status();
+    proc_.detach();
     proc_ = proc::process([c]()
     {
         return proc::this_process::replace("/bin/sh", "-c", std::move(c));
