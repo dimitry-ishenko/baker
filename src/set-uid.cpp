@@ -18,7 +18,7 @@
 #include <stdexcept>
 #include <string>
 
-app::version version = { 1, 0, 0 };
+app::version version = { 2, 0, 0 };
 
 ////////////////////////////////////////////////////////////////////////////////
 void list_devices()
