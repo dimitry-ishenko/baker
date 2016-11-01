@@ -1,0 +1,10 @@
+[Unit]
+Description=P.I. Engineering Controller
+
+[Service]
+ExecStart=/usr/sbin/baker --syslog --conf=/etc/baker.conf
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target
