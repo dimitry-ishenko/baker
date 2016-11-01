@@ -1,5 +1,5 @@
 ########## DEFINITIONS #################
-TARGETS			:= baker
+TARGETS			:= baker set-uid
 
 SUBDIRS			:= $(shell find src -type d)
 SOURCES			:=
