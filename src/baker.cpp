@@ -18,7 +18,7 @@
 #include <iostream>
 #include <string>
 
-app::version version = { 2, 0, 0 };
+app::version version = { 2, 0, 1 };
 
 ////////////////////////////////////////////////////////////////////////////////
 int main(int argc, char* argv[])
